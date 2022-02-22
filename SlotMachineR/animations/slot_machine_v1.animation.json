@@ -24,6 +24,68 @@
 					"rotation" : ["variable.angle_slot_3", 0.0, 0.0]
 				}
 			}
+		},
+		"animation.slot_machine.pulling" : {
+			"loop" : false,
+			"bones": {
+				"slot_1": {
+					"rotation" : {
+						"0.0": [-1.0, 0.0, 0.0],
+						"0.5": [-2.0, 0.0, 0.0],
+						"1.0": [-3.0, 0.0, 0.0]
+					}
+				},
+				"slot_2": {
+					"rotation" : {
+						"0.0": [-1.0, 0.0, 0.0],
+						"0.5": [-2.0, 0.0, 0.0],
+						"1.0": [-3.0, 0.0, 0.0]
+					}
+				},
+				"slot_3": {
+					"rotation" : {
+						"0.0": [-1.0, 0.0, 0.0],
+						"0.5": [-2.0, 0.0, 0.0],
+						"1.0": [-3.0, 0.0, 0.0]
+					}
+				}
+			}
+		},
+		"animation.slot_machine.braking_slot_1" : {
+			"loop" : false,
+			"bones": {
+				"slot_1": {
+					"rotation" : {
+						"0.0": [1.0, 0.0, 0.0],
+						"0.5": [-1.0, 0.0, 0.0],
+						"1.0": [0.0, 0.0, 0.0]
+					}
+				}
+			}
+		},
+		"animation.slot_machine.braking_slot_2" : {
+			"loop" : false,
+			"bones": {
+				"slot_2": {
+					"rotation" : {
+						"0.0": [1.0, 0.0, 0.0],
+						"0.5": [-1.0, 0.0, 0.0],
+						"1.0": [0.0, 0.0, 0.0]
+					}
+				}
+			}
+		},
+		"animation.slot_machine.braking_slot_3" : {
+			"loop" : false,
+			"bones": {
+				"slot_3": {
+					"rotation" : {
+						"0.0": [1.0, 0.0, 0.0],
+						"0.5": [-1.0, 0.0, 0.0],
+						"1.0": [0.0, 0.0, 0.0]
+					}
+				}
+			}
 		}
 	}
 }

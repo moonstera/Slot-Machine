@@ -18,9 +18,9 @@
           "variable.angle_slot_3 = 0.0;"
         ],
         "pre_animation": [
-          "variable.angle_slot_1 = query.skin_id * 30;",
-          "variable.angle_slot_2 = query.variant * 30;",
-          "variable.angle_slot_3 = query.mark_variant * 30;"
+          "variable.angle_slot_1 = (query.skin_id-0.5) * 30;",
+          "variable.angle_slot_2 = (query.variant-0.5) * 30;",
+          "variable.angle_slot_3 = (query.mark_variant-0.5) * 30;"
         ],
         "animate": [
           "slots"
@@ -30,7 +30,11 @@
         "slots": "controller.animation.slot_machine.slots",
         "rotates_slot_1": "animation.slot_machine.rotates_slot_1",
         "rotates_slot_2": "animation.slot_machine.rotates_slot_2",
-        "rotates_slot_3": "animation.slot_machine.rotates_slot_3"
+        "rotates_slot_3": "animation.slot_machine.rotates_slot_3",
+        "pulling": "animation.slot_machine.pulling",
+        "braking_slot_1": "animation.slot_machine.braking_slot_1",
+        "braking_slot_2": "animation.slot_machine.braking_slot_2",
+        "braking_slot_3": "animation.slot_machine.braking_slot_3"
       },
       "render_controllers": [ "controller.render.slot_machine.v1" ],
       "enable_attachables": false,
