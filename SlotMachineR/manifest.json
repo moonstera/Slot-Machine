@@ -1,0 +1,24 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "slot machine resource.",
+        "name": "Slot Machine Resource",
+        "uuid": "79f0e67f-0d61-4417-9c43-5c6d2c6fe850",
+        "version": [0, 0, 1],
+        "min_engine_version": [ 1, 18, 10 ]
+    },
+    "modules": [
+        {
+            "description": "slot machine resource.",
+            "type": "resources",
+            "uuid": "8bbd5bc8-2fd4-4b50-945b-3ea4cb99c2a1",
+            "version": [0, 0, 1]
+        }
+    ],
+    "dependencies": [
+        {
+            "uuid": "a13adc98-8def-4c28-adbc-2a35a347d8e4",
+            "version": [0, 0, 1]
+        }
+    ]
+}
