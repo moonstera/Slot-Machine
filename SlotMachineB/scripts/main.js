@@ -33,7 +33,7 @@ function getBingo(slot_1, slot_2, slot_3){
   if(slot_1[0] == slot_2[0] && slot_2[0] == slot_3[0]){
     bingo.push(slot_1[0]);
   }
-  if(slot_1[0] == slot_2[1] && slot_2[1] == slot_3[3]){
+  if(slot_1[0] == slot_2[1] && slot_2[1] == slot_3[2]){
     bingo.push(slot_1[0]);
   }
   if(slot_1[1] == slot_2[1] && slot_2[1] == slot_3[1]){
