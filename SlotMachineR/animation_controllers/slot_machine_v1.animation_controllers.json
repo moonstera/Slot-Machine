@@ -1,0 +1,17 @@
+{
+	"format_version" : "1.10.0",
+	"animation_controllers" : {
+		"controller.animation.slot_machine.slots" : {
+			"initial_state" : "default",
+			"states" : {
+				"default" : {
+					"animations" : [
+						"rotates_slot_1",
+						"rotates_slot_2",
+						"rotates_slot_3"
+					]
+				}
+			}
+		}
+	}
+}

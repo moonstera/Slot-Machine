@@ -1,0 +1,298 @@
+{
+  "format_version": "1.18.10",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "slot_machine:v1",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false,
+      "animations": {
+        "angle_slot_1": "controller.animation.angle_slot_1",
+        "angle_slot_2": "controller.animation.angle_slot_2",
+        "angle_slot_3": "controller.animation.angle_slot_3"
+      },
+      "scripts": {
+        "animate": [
+          "angle_slot_1",
+          "angle_slot_2",
+          "angle_slot_3"         
+        ]
+      }
+    },
+
+    "component_groups": {
+
+      "init": {
+        "minecraft:skin_id": { "value": 0 },
+        "minecraft:variant": { "value": 0 },
+        "minecraft:mark_variant": { "value": 0 }
+      },
+
+      "standby": {
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                    "test" :  "is_family", "subject" : "other", "value" :  "player"
+                },
+                "event": "rotations_3",
+                "target": "self"
+              },
+              "interact_text": "standby",
+              "play_sounds": "piston.out",
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "rotations_3": {
+        "minecraft:is_baby":{
+        },
+        "minecraft:is_chested":{
+        },
+        "minecraft:is_sheared":{
+        },
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                    "test" :  "is_family", "subject" : "other", "value" :  "player"
+                },
+                "event": "rotations_2",
+                "target": "self"
+              },
+              "interact_text": "rotations_3",
+              "play_sounds": "piston.in",
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "rotations_2": {
+        "minecraft:is_chested":{
+        },
+        "minecraft:is_sheared":{
+        },
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                    "test" :  "is_family", "subject" : "other", "value" :  "player"
+                },
+                "event": "rotations_1",
+                "target": "self"
+              },
+              "interact_text": "rotations_2",
+              "play_sounds": "piston.in",
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "rotations_1": {
+        "minecraft:is_sheared":{
+        },
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                    "test" :  "is_family", "subject" : "other", "value" :  "player"
+                },
+                "event": "result",
+                "target": "self"
+              },
+              "interact_text": "rotations_1",
+              "play_sounds": "piston.in",
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "result": {
+        "minecraft:timer": {
+          "looping": false,
+          "time": 3,
+          "time_down_event": {
+            "event": "standby",
+            "target": "self"
+          }
+        }
+      },
+
+      "slot_1_0": { "minecraft:skin_id": { "value": 0 } },
+      "slot_1_1": { "minecraft:skin_id": { "value": 1 } },
+      "slot_1_2": { "minecraft:skin_id": { "value": 2 } },
+      "slot_1_3": { "minecraft:skin_id": { "value": 3 } },
+      "slot_1_4": { "minecraft:skin_id": { "value": 4 } },
+      "slot_1_5": { "minecraft:skin_id": { "value": 5 } },
+      "slot_1_6": { "minecraft:skin_id": { "value": 6 } },
+      "slot_1_7": { "minecraft:skin_id": { "value": 7 } },
+      "slot_1_8": { "minecraft:skin_id": { "value": 8 } },
+      "slot_1_9": { "minecraft:skin_id": { "value": 9 } },
+      "slot_1_10": { "minecraft:skin_id": { "value": 10 } },
+      "slot_1_11": { "minecraft:skin_id": { "value": 11 } },
+
+      "slot_2_0": { "minecraft:variant": { "value": 0 } },
+      "slot_2_1": { "minecraft:variant": { "value": 1 } },
+      "slot_2_2": { "minecraft:variant": { "value": 2 } },
+      "slot_2_3": { "minecraft:variant": { "value": 3 } },
+      "slot_2_4": { "minecraft:variant": { "value": 4 } },
+      "slot_2_5": { "minecraft:variant": { "value": 5 } },
+      "slot_2_6": { "minecraft:variant": { "value": 6 } },
+      "slot_2_7": { "minecraft:variant": { "value": 7 } },
+      "slot_2_8": { "minecraft:variant": { "value": 8 } },
+      "slot_2_9": { "minecraft:variant": { "value": 9 } },
+      "slot_2_10": { "minecraft:variant": { "value": 10 } },
+      "slot_2_11": { "minecraft:variant": { "value": 11 } },
+
+      "slot_3_0": { "minecraft:mark_variant": { "value": 0 } },
+      "slot_3_1": { "minecraft:mark_variant": { "value": 1 } },
+      "slot_3_2": { "minecraft:mark_variant": { "value": 2 } },
+      "slot_3_3": { "minecraft:mark_variant": { "value": 3 } },
+      "slot_3_4": { "minecraft:mark_variant": { "value": 4 } },
+      "slot_3_5": { "minecraft:mark_variant": { "value": 5 } },
+      "slot_3_6": { "minecraft:mark_variant": { "value": 6 } },
+      "slot_3_7": { "minecraft:mark_variant": { "value": 7 } },
+      "slot_3_8": { "minecraft:mark_variant": { "value": 8 } },
+      "slot_3_9": { "minecraft:mark_variant": { "value": 9 } },
+      "slot_3_10": { "minecraft:mark_variant": { "value": 10 } },
+      "slot_3_11": { "minecraft:mark_variant": { "value": 11 } },
+
+
+      "despawn": {
+        "minecraft:despawn": {}
+      }
+    
+    },
+
+    "components": {
+      "minecraft:type_family": {
+        "family": [ "slot_machine", "inanimate" ]
+      },
+      "minecraft:collision_box": {
+        "width": 0.5,
+        "height": 1.975
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      },
+      "minecraft:push_through": {
+        "value": 1.0
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "deals_damage": false,
+            "cause": "all"
+          }
+        ]
+      },
+      "minecraft:physics": {
+      },
+      "minecraft:is_stackable": {
+      },
+      "minecraft:persistent": {
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": true
+      },
+
+      "minecraft:conditional_bandwidth_optimization": {
+      }
+
+    },
+
+    "events": {   
+      "minecraft:entity_spawned":{
+        "add": {
+          "component_groups": [
+            "init",
+            "standby"
+          ]
+        }
+      },
+
+      "standby": {
+        "add": { "component_groups": [ "standby" ] },
+        "remove": { "component_groups": [ "result" ] }
+      },
+
+      "rotations_3": {
+        "add": { "component_groups": [ "rotations_3" ] },
+        "remove": { "component_groups": [ "standby" ] }
+      },
+
+      "rotations_2": {
+        "add": { "component_groups": [ "rotations_2" ] },
+        "remove": { "component_groups": [ "rotations_3" ] }
+      },
+
+      "rotations_1": {
+        "add": { "component_groups": [ "rotations_1" ] },
+        "remove": { "component_groups": [ "rotations_2" ] }
+      },
+
+      "result": {
+        "add": { "component_groups": [ "result" ] },
+        "remove": { "component_groups": [ "rotations_1" ] }
+      },
+
+      "slot_1_0": { "add": { "component_groups": ["slot_1_0"] } },
+      "slot_1_1": { "add": { "component_groups": ["slot_1_1"] } },
+      "slot_1_2": { "add": { "component_groups": ["slot_1_2"] } },
+      "slot_1_3": { "add": { "component_groups": ["slot_1_3"] } },
+      "slot_1_4": { "add": { "component_groups": ["slot_1_4"] } },
+      "slot_1_5": { "add": { "component_groups": ["slot_1_5"] } },
+      "slot_1_6": { "add": { "component_groups": ["slot_1_6"] } },
+      "slot_1_7": { "add": { "component_groups": ["slot_1_7"] } },
+      "slot_1_8": { "add": { "component_groups": ["slot_1_8"] } },
+      "slot_1_9": { "add": { "component_groups": ["slot_1_9"] } },
+      "slot_1_10": { "add": { "component_groups": ["slot_1_10"] } },
+      "slot_1_11": { "add": { "component_groups": ["slot_1_11"] } },
+
+      "slot_2_0": { "add": { "component_groups": ["slot_2_0"] } },
+      "slot_2_1": { "add": { "component_groups": ["slot_2_1"] } },
+      "slot_2_2": { "add": { "component_groups": ["slot_2_2"] } },
+      "slot_2_3": { "add": { "component_groups": ["slot_2_3"] } },
+      "slot_2_4": { "add": { "component_groups": ["slot_2_4"] } },
+      "slot_2_5": { "add": { "component_groups": ["slot_2_5"] } },
+      "slot_2_6": { "add": { "component_groups": ["slot_2_6"] } },
+      "slot_2_7": { "add": { "component_groups": ["slot_2_7"] } },
+      "slot_2_8": { "add": { "component_groups": ["slot_2_8"] } },
+      "slot_2_9": { "add": { "component_groups": ["slot_2_9"] } },
+      "slot_2_10": { "add": { "component_groups": ["slot_2_10"] } },
+      "slot_2_11": { "add": { "component_groups": ["slot_2_11"] } },
+      
+      "slot_3_0": { "add": { "component_groups": ["slot_3_0"] } },
+      "slot_3_1": { "add": { "component_groups": ["slot_3_1"] } },
+      "slot_3_2": { "add": { "component_groups": ["slot_3_2"] } },
+      "slot_3_3": { "add": { "component_groups": ["slot_3_3"] } },
+      "slot_3_4": { "add": { "component_groups": ["slot_3_4"] } },
+      "slot_3_5": { "add": { "component_groups": ["slot_3_5"] } },
+      "slot_3_6": { "add": { "component_groups": ["slot_3_6"] } },
+      "slot_3_7": { "add": { "component_groups": ["slot_3_7"] } },
+      "slot_3_8": { "add": { "component_groups": ["slot_3_8"] } },
+      "slot_3_9": { "add": { "component_groups": ["slot_3_9"] } },
+      "slot_3_10": { "add": { "component_groups": ["slot_3_10"] } },
+      "slot_3_11": { "add": { "component_groups": ["slot_3_11"] } }
+
+    }
+  }
+}

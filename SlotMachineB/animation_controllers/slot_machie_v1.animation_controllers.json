@@ -1,0 +1,104 @@
+{
+	"format_version" : "1.10.0",
+	"animation_controllers" : {
+		"controller.animation.angle_slot_1" : {
+			"initial_state" : "default",
+			"states" : {
+				"default":{
+					"transitions":[
+						{"slot_1_0":"query.is_baby && query.skin_id == 0"},
+						{"slot_1_1":"query.is_baby && query.skin_id == 1"},
+						{"slot_1_2":"query.is_baby && query.skin_id == 2"},
+						{"slot_1_3":"query.is_baby && query.skin_id == 3"},
+						{"slot_1_4":"query.is_baby && query.skin_id == 4"},
+						{"slot_1_5":"query.is_baby && query.skin_id == 5"},
+						{"slot_1_6":"query.is_baby && query.skin_id == 6"},
+						{"slot_1_7":"query.is_baby && query.skin_id == 7"},
+						{"slot_1_8":"query.is_baby && query.skin_id == 8"},
+						{"slot_1_9":"query.is_baby && query.skin_id == 9"},
+						{"slot_1_10":"query.is_baby && query.skin_id == 10"},
+						{"slot_1_11":"query.is_baby && query.skin_id == 11"}
+					]
+				},
+				"slot_1_0":{"on_entry":["@s slot_1_0"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_1": "query.is_baby"}]},
+				"slot_1_1":{"on_entry":["@s slot_1_1"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_2": "query.is_baby"}]},
+				"slot_1_2":{"on_entry":["@s slot_1_2"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_3": "query.is_baby"}]},
+				"slot_1_3":{"on_entry":["@s slot_1_3"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_4": "query.is_baby"}]},
+				"slot_1_4":{"on_entry":["@s slot_1_4"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_5": "query.is_baby"}]},
+				"slot_1_5":{"on_entry":["@s slot_1_5"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_6": "query.is_baby"}]},
+				"slot_1_6":{"on_entry":["@s slot_1_6"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_7": "query.is_baby"}]},
+				"slot_1_7":{"on_entry":["@s slot_1_7"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_8": "query.is_baby"}]},
+				"slot_1_8":{"on_entry":["@s slot_1_8"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_9": "query.is_baby"}]},
+				"slot_1_9":{"on_entry":["@s slot_1_9"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_10": "query.is_baby"}]},
+				"slot_1_10":{"on_entry":["@s slot_1_10"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_11": "query.is_baby"}]},
+				"slot_1_11":{"on_entry":["@s slot_1_11"],"transitions":[{"default":"!query.is_baby"}, {"slot_1_0": "query.is_baby"}]}
+			}
+		},
+		"controller.animation.angle_slot_2" : {
+			"initial_state" : "default",
+			"states" : {
+				"default":{
+					"transitions":[
+						{"slot_2_0":"query.is_chested && query.variant == 0"},
+						{"slot_2_1":"query.is_chested && query.variant == 1"},
+						{"slot_2_2":"query.is_chested && query.variant == 2"},
+						{"slot_2_3":"query.is_chested && query.variant == 3"},
+						{"slot_2_4":"query.is_chested && query.variant == 4"},
+						{"slot_2_5":"query.is_chested && query.variant == 5"},
+						{"slot_2_6":"query.is_chested && query.variant == 6"},
+						{"slot_2_7":"query.is_chested && query.variant == 7"},
+						{"slot_2_8":"query.is_chested && query.variant == 8"},
+						{"slot_2_9":"query.is_chested && query.variant == 9"},
+						{"slot_2_10":"query.is_chested && query.variant == 10"},
+						{"slot_2_11":"query.is_chested && query.variant == 11"}
+					]
+				},
+				"slot_2_0":{"on_entry":["@s slot_2_0"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_1": "query.is_chested"}]},
+				"slot_2_1":{"on_entry":["@s slot_2_1"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_2": "query.is_chested"}]},
+				"slot_2_2":{"on_entry":["@s slot_2_2"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_3": "query.is_chested"}]},
+				"slot_2_3":{"on_entry":["@s slot_2_3"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_4": "query.is_chested"}]},
+				"slot_2_4":{"on_entry":["@s slot_2_4"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_5": "query.is_chested"}]},
+				"slot_2_5":{"on_entry":["@s slot_2_5"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_6": "query.is_chested"}]},
+				"slot_2_6":{"on_entry":["@s slot_2_6"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_7": "query.is_chested"}]},
+				"slot_2_7":{"on_entry":["@s slot_2_7"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_8": "query.is_chested"}]},
+				"slot_2_8":{"on_entry":["@s slot_2_8"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_9": "query.is_chested"}]},
+				"slot_2_9":{"on_entry":["@s slot_2_9"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_10": "query.is_chested"}]},
+				"slot_2_10":{"on_entry":["@s slot_2_10"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_11": "query.is_chested"}]},
+				"slot_2_11":{"on_entry":["@s slot_2_11"],"transitions":[{"default":"!query.is_chested"}, {"slot_2_0": "query.is_chested"}]}
+			}
+		},
+		"controller.animation.angle_slot_3" : {
+			"initial_state" : "default",
+			"states" : {
+				"default":{
+					"transitions":[
+						{"slot_3_0":"query.is_sheared && query.mark_variant == 0"},
+						{"slot_3_1":"query.is_sheared && query.mark_variant == 1"},
+						{"slot_3_2":"query.is_sheared && query.mark_variant == 2"},
+						{"slot_3_3":"query.is_sheared && query.mark_variant == 3"},
+						{"slot_3_4":"query.is_sheared && query.mark_variant == 4"},
+						{"slot_3_5":"query.is_sheared && query.mark_variant == 5"},
+						{"slot_3_6":"query.is_sheared && query.mark_variant == 6"},
+						{"slot_3_7":"query.is_sheared && query.mark_variant == 7"},
+						{"slot_3_8":"query.is_sheared && query.mark_variant == 8"},
+						{"slot_3_9":"query.is_sheared && query.mark_variant == 9"},
+						{"slot_3_10":"query.is_sheared && query.mark_variant == 10"},
+						{"slot_3_11":"query.is_sheared && query.mark_variant == 11"}
+					]
+				},
+				"slot_3_0":{"on_entry":["@s slot_3_0"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_1": "query.is_sheared"}]},
+				"slot_3_1":{"on_entry":["@s slot_3_1"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_2": "query.is_sheared"}]},
+				"slot_3_2":{"on_entry":["@s slot_3_2"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_3": "query.is_sheared"}]},
+				"slot_3_3":{"on_entry":["@s slot_3_3"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_4": "query.is_sheared"}]},
+				"slot_3_4":{"on_entry":["@s slot_3_4"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_5": "query.is_sheared"}]},
+				"slot_3_5":{"on_entry":["@s slot_3_5"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_6": "query.is_sheared"}]},
+				"slot_3_6":{"on_entry":["@s slot_3_6"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_7": "query.is_sheared"}]},
+				"slot_3_7":{"on_entry":["@s slot_3_7"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_8": "query.is_sheared"}]},
+				"slot_3_8":{"on_entry":["@s slot_3_8"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_9": "query.is_sheared"}]},
+				"slot_3_9":{"on_entry":["@s slot_3_9"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_10": "query.is_sheared"}]},
+				"slot_3_10":{"on_entry":["@s slot_3_10"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_11": "query.is_sheared"}]},
+				"slot_3_11":{"on_entry":["@s slot_3_11"],"transitions":[{"default":"!query.is_sheared"}, {"slot_3_0": "query.is_sheared"}]}
+			}
+		}
+	}
+}

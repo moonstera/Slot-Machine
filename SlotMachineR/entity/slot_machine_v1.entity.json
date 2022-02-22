@@ -1,0 +1,43 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "slot_machine:v1",
+      "materials": { "default": "armor_stand" },
+      "textures": {
+        "default": "textures/entity/slot_machine_v1"
+      },
+      "geometry": {
+        "default": "geometry.slot_machine_v1"
+      },
+      "scripts": {
+        "scale": "0.9375",
+        "initialize": [
+          "variable.angle_slot_1 = 0.0;",
+          "variable.angle_slot_2 = 0.0;",
+          "variable.angle_slot_3 = 0.0;"
+        ],
+        "pre_animation": [
+          "variable.angle_slot_1 = query.skin_id * 30;",
+          "variable.angle_slot_2 = query.variant * 30;",
+          "variable.angle_slot_3 = query.mark_variant * 30;"
+        ],
+        "animate": [
+          "slots"
+        ]
+      },
+      "animations": {
+        "slots": "controller.animation.slot_machine.slots",
+        "rotates_slot_1": "animation.slot_machine.rotates_slot_1",
+        "rotates_slot_2": "animation.slot_machine.rotates_slot_2",
+        "rotates_slot_3": "animation.slot_machine.rotates_slot_3"
+      },
+      "render_controllers": [ "controller.render.slot_machine.v1" ],
+      "enable_attachables": false,
+      "spawn_egg": {
+        "texture": "spawn_egg",
+        "texture_index": 18
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "slot machine behavior.",
+        "name": "Slot Machine Behavior",
+        "uuid": "a13adc98-8def-4c28-adbc-2a35a347d8e4",
+        "version": [ 0, 0, 1 ],
+        "min_engine_version": [ 1, 18, 10 ]
+    },
+    "modules": [
+        {
+            "description": "slot machine behavior.",
+            "type": "data",
+            "uuid": "9e54856b-1b3c-4dcb-ab76-463a229aec80",
+            "version": [0, 0, 1]
+        },
+        {
+            "description": "slot machine script.",
+            "type": "javascript",
+            "uuid": "ee5731fa-43b7-44e3-ab40-dd7321e38937",
+            "version": [0, 0, 1],
+            "entry": "scripts/main.js"
+        }
+    ],
+    "dependencies": [
+        {
+            "uuid": "79f0e67f-0d61-4417-9c43-5c6d2c6fe850",
+            "version": [0, 0, 1]
+        },
+        {//mojang-gametest
+            "uuid": "b26a4d4c-afdf-4690-88f8-931846312678",
+            "version": [ 0, 1, 0 ]
+        },
+        {//mojang-minecraft
+            "uuid": "6f4b6893-1bb6-42fd-b458-7fa3d0c89616",
+            "version": [ 0, 1, 0 ]
+        },
+        {//mojang-minecraft-ui
+            "uuid": "2BD50A27-AB5F-4F40-A596-3641627C635E",
+            "version": [ 0, 1, 0 ]
+        }
+    ]
+}
