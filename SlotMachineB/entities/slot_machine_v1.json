@@ -17,6 +17,40 @@
           "angle_slot_2",
           "angle_slot_3"         
         ]
+      },
+      "properties":{
+        "slot_machine:pulling":{
+          "values":[
+              true,
+              false
+          ],
+          "default":false,
+          "client_sync": true
+        },
+        "slot_machine:braking_slot_1":{
+          "values":[
+            true,
+            false
+          ],
+          "default":false,
+          "client_sync": true
+        },
+        "slot_machine:braking_slot_2":{
+          "values":[
+            true,
+            false
+          ],
+          "default":false,
+          "client_sync": true
+        },
+        "slot_machine:braking_slot_3":{
+          "values":[
+            true,
+            false
+          ],
+          "default":false,
+          "client_sync": true
+        }
       }
     },
 
@@ -36,7 +70,7 @@
                 "filters": {
                     "test" :  "is_family", "subject" : "other", "value" :  "player"
                 },
-                "event": "rotations_3",
+                "event": "pulling",
                 "target": "self"
               },
               "interact_text": "standby",
@@ -46,6 +80,17 @@
               "cooldown_after_being_attacked": 0.0
             }
           ]
+        }
+      },
+
+      "pulling": {
+        "minecraft:timer": {
+          "looping": true,
+          "time": 1,
+          "time_down_event": {
+            "event": "rotations_3",
+            "target": "self"
+          }
         }
       },
 
@@ -111,7 +156,7 @@
                 "filters": {
                     "test" :  "is_family", "subject" : "other", "value" :  "player"
                 },
-                "event": "result",
+                "event": "braking",
                 "target": "self"
               },
               "interact_text": "rotations_1",
@@ -124,10 +169,21 @@
         }
       },
 
+      "braking": {
+        "minecraft:timer": {
+          "looping": true,
+          "time": 1,
+          "time_down_event": {
+            "event": "result",
+            "target": "self"
+          }
+        }
+      },
+
       "result": {
         "minecraft:timer": {
-          "looping": false,
-          "time": 3,
+          "looping": true,
+          "time": 1,
           "time_down_event": {
             "event": "standby",
             "target": "self"
@@ -234,24 +290,54 @@
         "remove": { "component_groups": [ "result" ] }
       },
 
+      "pulling": {
+        "add": { "component_groups": [ "pulling" ] },
+        "remove": { "component_groups": [ "result" ] },
+        "set_actor_property":{
+          "slot_machine:pulling": true
+        }
+      },
+
       "rotations_3": {
         "add": { "component_groups": [ "rotations_3" ] },
-        "remove": { "component_groups": [ "standby" ] }
+        "remove": { "component_groups": [ "pulling" ] },
+        "set_actor_property":{
+          "slot_machine:pulling": false
+        }
       },
 
       "rotations_2": {
         "add": { "component_groups": [ "rotations_2" ] },
-        "remove": { "component_groups": [ "rotations_3" ] }
+        "remove": { "component_groups": [ "rotations_3" ] },
+        "set_actor_property":{
+          "slot_machine:braking_slot_1": true
+        }
       },
 
       "rotations_1": {
         "add": { "component_groups": [ "rotations_1" ] },
-        "remove": { "component_groups": [ "rotations_2" ] }
+        "remove": { "component_groups": [ "rotations_2" ] },
+        "set_actor_property":{
+          "slot_machine:braking_slot_2": true
+        }
+      },
+
+      "braking": {
+        "add": { "component_groups": [ "braking" ] },
+        "remove": { "component_groups": [ "rotations_1" ] },
+        "set_actor_property":{
+          "slot_machine:braking_slot_3": true
+        }
       },
 
       "result": {
         "add": { "component_groups": [ "result" ] },
-        "remove": { "component_groups": [ "rotations_1" ] }
+        "remove": { "component_groups": [ "braking" ] },
+        "set_actor_property":{
+          "slot_machine:braking_slot_1": false,
+          "slot_machine:braking_slot_2": false,
+          "slot_machine:braking_slot_3": false
+        }
       },
 
       "slot_1_0": { "add": { "component_groups": ["slot_1_0"] } },

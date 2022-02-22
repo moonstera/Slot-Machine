@@ -8,7 +8,31 @@
 					"animations" : [
 						"rotates_slot_1",
 						"rotates_slot_2",
-						"rotates_slot_3"
+						"rotates_slot_3",
+						{ "braking_slot_1" : "query.actor_property('slot_machine:braking_slot_1')" },
+						{ "braking_slot_2" : "query.actor_property('slot_machine:braking_slot_2')" },
+						{ "braking_slot_3" : "query.actor_property('slot_machine:braking_slot_3')" }
+					],
+					"transitions" : [
+						{
+							"pulling" : "query.actor_property('slot_machine:pulling')"
+						}
+					]
+				},
+				"pulling": {
+					"animations" : [
+						"rotates_slot_1",
+						"rotates_slot_2",
+						"rotates_slot_3",
+						"pulling",
+						{ "braking_slot_1" : "query.actor_property('slot_machine:braking_slot_1')" },
+						{ "braking_slot_2" : "query.actor_property('slot_machine:braking_slot_2')" },
+						{ "braking_slot_3" : "query.actor_property('slot_machine:braking_slot_3')" }
+					],
+					"transitions" : [
+						{
+							"default" : "!query.actor_property('slot_machine:pulling')"
+						}
 					]
 				}
 			}
