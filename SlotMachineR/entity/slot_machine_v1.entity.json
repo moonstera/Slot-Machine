@@ -5,10 +5,12 @@
       "identifier": "slot_machine:v1",
       "materials": { "default": "armor_stand" },
       "textures": {
-        "default": "textures/entity/slot_machine_v1"
+        "default": "textures/entity/slot_machine_v1",
+        "body": "textures/entity/slot_machine_body"
       },
       "geometry": {
-        "default": "geometry.slot_machine_v1"
+        "default": "geometry.slot_machine_v1",
+        "body": "geometry.slot_machine_body"
       },
       "scripts": {
         "scale": "0.9375",
@@ -18,9 +20,9 @@
           "variable.angle_slot_3 = 0.0;"
         ],
         "pre_animation": [
-          "variable.angle_slot_1 = (query.skin_id-0.5) * 30;",
-          "variable.angle_slot_2 = (query.variant-0.5) * 30;",
-          "variable.angle_slot_3 = (query.mark_variant-0.5) * 30;"
+          "variable.angle_slot_1 = query.skin_id * 20;",
+          "variable.angle_slot_2 = query.variant * 20;",
+          "variable.angle_slot_3 = query.mark_variant * 20;"
         ],
         "animate": [
           "slots"
@@ -36,7 +38,10 @@
         "braking_slot_2": "animation.slot_machine.braking_slot_2",
         "braking_slot_3": "animation.slot_machine.braking_slot_3"
       },
-      "render_controllers": [ "controller.render.slot_machine.v1" ],
+      "render_controllers": [ 
+        "controller.render.slot_machine.v1",
+        "controller.render.slot_machine.body"
+      ],
       "enable_attachables": false,
       "spawn_egg": {
         "texture": "spawn_egg",

@@ -86,7 +86,7 @@
       "pulling": {
         "minecraft:timer": {
           "looping": true,
-          "time": 1,
+          "time": 0.3,
           "time_down_event": {
             "event": "rotations_3",
             "target": "self"
@@ -172,7 +172,7 @@
       "braking": {
         "minecraft:timer": {
           "looping": true,
-          "time": 1,
+          "time": 0.5,
           "time_down_event": {
             "event": "result",
             "target": "self"
@@ -203,6 +203,12 @@
       "slot_1_9": { "minecraft:skin_id": { "value": 9 } },
       "slot_1_10": { "minecraft:skin_id": { "value": 10 } },
       "slot_1_11": { "minecraft:skin_id": { "value": 11 } },
+      "slot_1_12": { "minecraft:skin_id": { "value": 12 } },
+      "slot_1_13": { "minecraft:skin_id": { "value": 13 } },
+      "slot_1_14": { "minecraft:skin_id": { "value": 14 } },
+      "slot_1_15": { "minecraft:skin_id": { "value": 15 } },
+      "slot_1_16": { "minecraft:skin_id": { "value": 16 } },
+      "slot_1_17": { "minecraft:skin_id": { "value": 17 } },
 
       "slot_2_0": { "minecraft:variant": { "value": 0 } },
       "slot_2_1": { "minecraft:variant": { "value": 1 } },
@@ -216,6 +222,12 @@
       "slot_2_9": { "minecraft:variant": { "value": 9 } },
       "slot_2_10": { "minecraft:variant": { "value": 10 } },
       "slot_2_11": { "minecraft:variant": { "value": 11 } },
+      "slot_2_12": { "minecraft:variant": { "value": 12 } },
+      "slot_2_13": { "minecraft:variant": { "value": 13 } },
+      "slot_2_14": { "minecraft:variant": { "value": 14 } },
+      "slot_2_15": { "minecraft:variant": { "value": 15 } },
+      "slot_2_16": { "minecraft:variant": { "value": 16 } },
+      "slot_2_17": { "minecraft:variant": { "value": 17 } },
 
       "slot_3_0": { "minecraft:mark_variant": { "value": 0 } },
       "slot_3_1": { "minecraft:mark_variant": { "value": 1 } },
@@ -229,6 +241,12 @@
       "slot_3_9": { "minecraft:mark_variant": { "value": 9 } },
       "slot_3_10": { "minecraft:mark_variant": { "value": 10 } },
       "slot_3_11": { "minecraft:mark_variant": { "value": 11 } },
+      "slot_3_12": { "minecraft:mark_variant": { "value": 12 } },
+      "slot_3_13": { "minecraft:mark_variant": { "value": 13 } },
+      "slot_3_14": { "minecraft:mark_variant": { "value": 14 } },
+      "slot_3_15": { "minecraft:mark_variant": { "value": 15 } },
+      "slot_3_16": { "minecraft:mark_variant": { "value": 16 } },
+      "slot_3_17": { "minecraft:mark_variant": { "value": 17 } },
 
 
       "despawn": {
@@ -300,10 +318,7 @@
 
       "rotations_3": {
         "add": { "component_groups": [ "rotations_3" ] },
-        "remove": { "component_groups": [ "pulling" ] },
-        "set_actor_property":{
-          "slot_machine:pulling": false
-        }
+        "remove": { "component_groups": [ "pulling" ] }
       },
 
       "rotations_2": {
@@ -334,6 +349,7 @@
         "add": { "component_groups": [ "result" ] },
         "remove": { "component_groups": [ "braking" ] },
         "set_actor_property":{
+          "slot_machine:pulling": false,
           "slot_machine:braking_slot_1": false,
           "slot_machine:braking_slot_2": false,
           "slot_machine:braking_slot_3": false
@@ -352,6 +368,12 @@
       "slot_1_9": { "add": { "component_groups": ["slot_1_9"] } },
       "slot_1_10": { "add": { "component_groups": ["slot_1_10"] } },
       "slot_1_11": { "add": { "component_groups": ["slot_1_11"] } },
+      "slot_1_12": { "add": { "component_groups": ["slot_1_12"] } },
+      "slot_1_13": { "add": { "component_groups": ["slot_1_13"] } },
+      "slot_1_14": { "add": { "component_groups": ["slot_1_14"] } },
+      "slot_1_15": { "add": { "component_groups": ["slot_1_15"] } },
+      "slot_1_16": { "add": { "component_groups": ["slot_1_16"] } },
+      "slot_1_17": { "add": { "component_groups": ["slot_1_17"] } },
 
       "slot_2_0": { "add": { "component_groups": ["slot_2_0"] } },
       "slot_2_1": { "add": { "component_groups": ["slot_2_1"] } },
@@ -365,6 +387,12 @@
       "slot_2_9": { "add": { "component_groups": ["slot_2_9"] } },
       "slot_2_10": { "add": { "component_groups": ["slot_2_10"] } },
       "slot_2_11": { "add": { "component_groups": ["slot_2_11"] } },
+      "slot_2_12": { "add": { "component_groups": ["slot_2_12"] } },
+      "slot_2_13": { "add": { "component_groups": ["slot_2_13"] } },
+      "slot_2_14": { "add": { "component_groups": ["slot_2_14"] } },
+      "slot_2_15": { "add": { "component_groups": ["slot_2_15"] } },
+      "slot_2_16": { "add": { "component_groups": ["slot_2_16"] } },
+      "slot_2_17": { "add": { "component_groups": ["slot_2_17"] } },
       
       "slot_3_0": { "add": { "component_groups": ["slot_3_0"] } },
       "slot_3_1": { "add": { "component_groups": ["slot_3_1"] } },
@@ -377,7 +405,13 @@
       "slot_3_8": { "add": { "component_groups": ["slot_3_8"] } },
       "slot_3_9": { "add": { "component_groups": ["slot_3_9"] } },
       "slot_3_10": { "add": { "component_groups": ["slot_3_10"] } },
-      "slot_3_11": { "add": { "component_groups": ["slot_3_11"] } }
+      "slot_3_11": { "add": { "component_groups": ["slot_3_11"] } },
+      "slot_3_12": { "add": { "component_groups": ["slot_3_12"] } },
+      "slot_3_13": { "add": { "component_groups": ["slot_3_13"] } },
+      "slot_3_14": { "add": { "component_groups": ["slot_3_14"] } },
+      "slot_3_15": { "add": { "component_groups": ["slot_3_15"] } },
+      "slot_3_16": { "add": { "component_groups": ["slot_3_16"] } },
+      "slot_3_17": { "add": { "component_groups": ["slot_3_17"] } }
 
     }
   }
