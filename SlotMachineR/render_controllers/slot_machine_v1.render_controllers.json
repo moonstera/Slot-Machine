@@ -20,6 +20,26 @@
         "b": 0.0,
         "a": 0.0
       }
+    },
+    "controller.render.slot_machine.body": {
+      "geometry": "Geometry.body",
+      "materials": [ { "*": "Material.default" } ],
+      "textures": [ "Texture.body"],
+      "part_visibility": [
+        { "*": "true" }
+      ],
+      "is_hurt_color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 0.0
+      },
+      "on_fire_color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 0.0
+      }
     }
   }
 }

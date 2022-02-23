@@ -54,7 +54,7 @@ function propertyToSlotData(property, slot_data){
   return [slot_data[slot_data_1_index], slot_data[property], slot_data[slot_data_3_index]];
 }
 
-const max_slot = 12;
+const max_slot = 18;
 const slot_1_data = {
   0: "diamond",
   1: "sweet_berries",
@@ -68,6 +68,12 @@ const slot_1_data = {
   9: "apple_golden",
   10: "melon",
   11: "sweet_berries",
+  12: "sweet_berries",
+  13: "sweet_berries",
+  14: "sweet_berries",
+  15: "sweet_berries",
+  16: "sweet_berries",
+  17: "sweet_berries",
 };
 
 const slot_2_data = {
@@ -83,6 +89,12 @@ const slot_2_data = {
   9: "cookie",
   10: "apple_golden",
   11: "cookie",
+  12: "cookie",
+  13: "cookie",
+  14: "cookie",
+  15: "cookie",
+  16: "cookie",
+  17: "cookie",
 };
 
 const slot_3_data = {
@@ -98,4 +110,10 @@ const slot_3_data = {
   9: "melon",
   10: "cookie",
   11: "apple_golden",
+  12: "apple_golden",
+  13: "apple_golden",
+  14: "apple_golden",
+  15: "apple_golden",
+  16: "apple_golden",
+  17: "apple_golden",
 };
