@@ -3,7 +3,7 @@
   "minecraft:entity": {
     "description": {
       "identifier": "slot_machine:v1",
-      "is_spawnable": true,
+      "is_spawnable": false,
       "is_summonable": true,
       "is_experimental": false,
       "animations": {
@@ -248,9 +248,104 @@
       "slot_3_16": { "minecraft:mark_variant": { "value": 16 } },
       "slot_3_17": { "minecraft:mark_variant": { "value": 17 } },
 
+      "to_despawn_1": {
+        "minecraft:timer": {
+          "looping": true,
+          "time": 2.0,
+          "time_down_event": {
+            "event": "not_despawn",
+            "target": "self"
+          }
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "player"
+                },
+                "event": "to_despawn_2",
+                "target": "self"
+              },
+              "deals_damage": false,
+              "cause": "all"
+            }
+          ]
+        }
+      },
 
+      "to_despawn_2": {
+        "minecraft:timer": {
+          "looping": true,
+          "time": 2.0,
+          "time_down_event": {
+            "event": "not_despawn",
+            "target": "self"
+          }
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "player"
+                },
+                "event": "to_despawn_3",
+                "target": "self"
+              },
+              "deals_damage": false,
+              "cause": "all"
+            }
+          ]
+        }
+      },
+
+      "to_despawn_3": {
+        "minecraft:timer": {
+          "looping": true,
+          "time": 0.2,
+          "time_down_event": {
+            "event": "despawn",
+            "target": "self"
+          }
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "deals_damage": false,
+              "cause": "all"
+            }
+          ]
+        }
+      },
+
+      "not_despawn": {
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "player"
+                },
+                "event": "to_despawn_1",
+                "target": "self"
+              },
+              "deals_damage": false,
+              "cause": "all"
+            }
+          ]
+        }
+      },
+        
       "despawn": {
-        "minecraft:despawn": {}
+        "minecraft:instant_despawn":{
+        }
       }
     
     },
@@ -272,6 +367,15 @@
       "minecraft:damage_sensor": {
         "triggers": [
           {
+            "on_damage": {
+              "filters": {
+                "test": "is_family",
+                "subject": "other",
+                "value": "player"
+              },
+              "event": "to_despawn_1",
+              "target": "self"
+            },
             "deals_damage": false,
             "cause": "all"
           }
@@ -286,6 +390,9 @@
       "minecraft:pushable": {
         "is_pushable": false,
         "is_pushable_by_piston": true
+      },
+      "minecraft:loot": {
+        "table": "loot_tables/entities/slot_machine_v1.json"
       },
 
       "minecraft:conditional_bandwidth_optimization": {
@@ -354,6 +461,38 @@
           "slot_machine:braking_slot_2": false,
           "slot_machine:braking_slot_3": false
         }
+      },
+
+      "to_despawn_1": {
+        "add": { "component_groups": [ "to_despawn_1" ] }
+      },
+
+      "to_despawn_2": {
+        "add": { "component_groups": [ "to_despawn_2" ] }
+      },
+
+      "to_despawn_3": {
+        "add": { "component_groups": [ "to_despawn_3" ] }
+      },
+
+      "not_despawn": {
+        "add": { "component_groups": [ "not_despawn" ] },
+        "remove": {
+          "component_groups": [ 
+            "to_despawn_1",
+            "to_despawn_2"
+          ] 
+        }
+      },
+
+      "despawn": {
+        "add": { "component_groups": [ "despawn" ] },
+        "run_command": {
+          "command": [
+            "loot spawn ~~~ loot \"entities/slot_machine_v1\""
+          ]
+        }
+        
       },
 
       "slot_1_0": { "add": { "component_groups": ["slot_1_0"] } },

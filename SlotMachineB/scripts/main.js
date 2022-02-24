@@ -1,4 +1,4 @@
-import { world, EntityDataDrivenTriggerEventOptions } from "mojang-minecraft";
+import { world, ItemStack, EntityDataDrivenTriggerEventOptions, BlockLocation, Vector, MinecraftItemTypes, EntityQueryOptions, SoundOptions, EntityEventOptions } from "mojang-minecraft";
 
 let result_event_option = new EntityDataDrivenTriggerEventOptions();
 result_event_option.entityTypes = ["slot_machine:v1"];
@@ -14,12 +14,26 @@ world.events.dataDrivenEntityTriggerEvent.subscribe(event => {
     let slot_2_data_3 = propertyToSlotData(variant, slot_2_data);
     let slot_3_data_3 = propertyToSlotData(mark_variant, slot_3_data);
     let bingo = getBingo(slot_1_data_3, slot_2_data_3, slot_3_data_3);
+    let amount = 0;
     if(bingo.length > 0){
       for(let i of bingo){
-        dim.runCommand("say " + String(i));
+        amount += role_data[i];
+        //dim.runCommand("say " + String(i));
       }
+      let entity_query_options = new EntityQueryOptions();
+      entity_query_options.location = entity.location;
+      entity_query_options.maxDistance = 10;
+      let players = dim.getPlayers(entity_query_options);
+      let sound_options = new SoundOptions();
+      sound_options.location = entity.location;
+      for(let player of players){
+        world.playSound("random.levelup", sound_options);
+      }
+      let item_stack = new ItemStack(MinecraftItemTypes.emerald, amount, 0);
+      let items = dim.spawnItem(item_stack, new BlockLocation(entity.location.x, entity.location.y, entity.location.z));
+      items.setVelocity(entity.viewVector);
     } else {
-      dim.runCommand("say なし");
+      //dim.runCommand("say なし");
     }
     //let dim = event.entity.dimension;
     //dim.runCommand("say " + String(event.id));
@@ -55,6 +69,15 @@ function propertyToSlotData(property, slot_data){
 }
 
 const max_slot = 18;
+const role_data = {
+  "diamond": 7,
+  "sweet_berries": 1,
+  "melon": 1,
+  "emerald": 2.0,
+  "apple_golden": 3,
+  "amethyst_shard": 5,
+  "nether_star": 10
+};
 const slot_1_data = {
   0: "diamond",
   1: "sweet_berries",
