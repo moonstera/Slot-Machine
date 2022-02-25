@@ -1,0 +1,25 @@
+{
+  "format_version": "1.12",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "slot_machine:v1"
+    },
+    "tags": [ "crafting_table" ],
+    "pattern": [
+		  "aaa",
+      "aba",
+      "aaa"
+	 ],
+    "key": {
+      "a": {
+        "item": "minecraft:iron_ingot"
+      },
+      "b": {
+        "item": "minecraft:emerald"
+      }
+    },
+    "result": {
+      "item": "slot_machine:v1"
+    }
+  }
+}

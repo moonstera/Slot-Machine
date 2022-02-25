@@ -9,13 +9,15 @@
       "animations": {
         "angle_slot_1": "controller.animation.angle_slot_1",
         "angle_slot_2": "controller.animation.angle_slot_2",
-        "angle_slot_3": "controller.animation.angle_slot_3"
+        "angle_slot_3": "controller.animation.angle_slot_3",
+        "despawn": "controller.animation.despawn"
       },
       "scripts": {
         "animate": [
           "angle_slot_1",
           "angle_slot_2",
-          "angle_slot_3"         
+          "angle_slot_3",
+          "despawn"       
         ]
       },
       "properties":{
@@ -26,6 +28,27 @@
           ],
           "default":false,
           "client_sync": true
+        },
+        "slot_machine:rotate_slot_1":{
+          "values":[
+              true,
+              false
+          ],
+          "default":false
+        },
+        "slot_machine:rotate_slot_2":{
+          "values":[
+              true,
+              false
+          ],
+          "default":false
+        },
+        "slot_machine:rotate_slot_3":{
+          "values":[
+              true,
+              false
+          ],
+          "default":false
         },
         "slot_machine:braking_slot_1":{
           "values":[
@@ -50,11 +73,22 @@
           ],
           "default":false,
           "client_sync": true
+        },
+        "slot_machine:despawn":{
+          "values":[
+            true,
+            false
+          ],
+          "default":false
         }
       }
     },
 
     "component_groups": {
+
+      //
+      //init → standby → bet_1~5 → pulling → rotations_3 → rotations_2 → rotations_1 → braking → result → standby → ...
+      //
 
       "init": {
         "minecraft:skin_id": { "value": 0 },
@@ -68,12 +102,343 @@
             {
               "on_interact": {
                 "filters": {
-                    "test" :  "is_family", "subject" : "other", "value" :  "player"
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "value": "emerald"}
+                  ]
+                },
+                "event": "bet_1",
+                "target": "self"
+              },
+              "interact_text": "bet",
+              "play_sounds": "block.click",
+              "use_item": true,
+              "particle_on_start": {
+                "particle_type": "villagerhappy",
+                "particle_y_offset": 1.15,
+                "particle_offset_towards_interactor": false
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "bet_1": {
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other" }
+                  ]
+                },
+                "event": "standby",
+                "target": "self"
+              },
+              "interact_text": "undo",
+              "play_sounds": "pop",
+              "add_items": {
+                "table": "loot_tables/gameplay/entities/slot_machine_undo_bet.json"
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "value": "emerald"}
+                  ]
+                },
+                "event": "bet_2",
+                "target": "self"
+              },
+              "interact_text": "bet",
+              "play_sounds": "block.click",
+              "use_item": true,
+              "particle_on_start": {
+                "particle_type": "villagerhappy",
+                "particle_y_offset": 1.15,
+                "particle_offset_towards_interactor": false
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "operator": "not", "value": "emerald"}
+                  ]
                 },
                 "event": "pulling",
                 "target": "self"
               },
-              "interact_text": "standby",
+              "interact_text": "pull",
+              "play_sounds": "piston.out",
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "bet_2": {
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other" }
+                  ]
+                },
+                "event": "bet_1",
+                "target": "self"
+              },
+              "interact_text": "undo",
+              "play_sounds": "pop",
+              "add_items": {
+                "table": "loot_tables/gameplay/entities/slot_machine_undo_bet.json"
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "value": "emerald"}
+                  ]
+                },
+                "event": "bet_3",
+                "target": "self"
+              },
+              "interact_text": "bet",
+              "play_sounds": "block.click",
+              "use_item": true,
+              "particle_on_start": {
+                "particle_type": "villagerhappy",
+                "particle_y_offset": 1.15,
+                "particle_offset_towards_interactor": false
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "operator": "not", "value": "emerald"}
+                  ]
+                },
+                "event": "pulling",
+                "target": "self"
+              },
+              "interact_text": "pull",
+              "play_sounds": "piston.out",
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "bet_3": {
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other" }
+                  ]
+                },
+                "event": "bet_2",
+                "target": "self"
+              },
+              "interact_text": "undo",
+              "play_sounds": "pop",
+              "add_items": {
+                "table": "loot_tables/gameplay/entities/slot_machine_undo_bet.json"
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "value": "emerald"}
+                  ]
+                },
+                "event": "bet_4",
+                "target": "self"
+              },
+              "interact_text": "bet",
+              "play_sounds": "block.click",
+              "use_item": true,
+              "particle_on_start": {
+                "particle_type": "villagerhappy",
+                "particle_y_offset": 1.15,
+                "particle_offset_towards_interactor": false
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "operator": "not", "value": "emerald"}
+                  ]
+                },
+                "event": "pulling",
+                "target": "self"
+              },
+              "interact_text": "pull",
+              "play_sounds": "piston.out",
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "bet_4": {
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other" }
+                  ]
+                },
+                "event": "bet_3",
+                "target": "self"
+              },
+              "interact_text": "undo",
+              "play_sounds": "pop",
+              "add_items": {
+                "table": "loot_tables/gameplay/entities/slot_machine_undo_bet.json"
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "value": "emerald"}
+                  ]
+                },
+                "event": "bet_5",
+                "target": "self"
+              },
+              "interact_text": "bet",
+              "play_sounds": "block.click",
+              "use_item": true,
+              "particle_on_start": {
+                "particle_type": "villagerhappy",
+                "particle_y_offset": 1.15,
+                "particle_offset_towards_interactor": false
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "operator": "not", "value": "emerald"}
+                  ]
+                },
+                "event": "pulling",
+                "target": "self"
+              },
+              "interact_text": "pull",
+              "play_sounds": "piston.out",
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            }
+          ]
+        }
+      },
+
+      "bet_5": {
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other" }
+                  ]
+                },
+                "event": "bet_4",
+                "target": "self"
+              },
+              "interact_text": "undo",
+              "play_sounds": "pop",
+              "add_items": {
+                "table": "loot_tables/gameplay/entities/slot_machine_undo_bet.json"
+              },
+              "swing": true,
+              "cooldown": 0.0,
+              "cooldown_after_being_attacked": 0.0
+            },
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    { "test" :  "is_family", "subject" : "other", "value" : "player" },
+                    { "test" :  "is_sneaking", "subject" : "other", "operator": "not" },
+                    { "test": "has_equipment", "domain": "hand", "subject": "other", "operator": "not", "value": "emerald"}
+                  ]
+                },
+                "event": "pulling",
+                "target": "self"
+              },
+              "interact_text": "pull",
               "play_sounds": "piston.out",
               "swing": true,
               "cooldown": 0.0,
@@ -95,12 +460,6 @@
       },
 
       "rotations_3": {
-        "minecraft:is_baby":{
-        },
-        "minecraft:is_chested":{
-        },
-        "minecraft:is_sheared":{
-        },
         "minecraft:interact": {
           "interactions": [
             {
@@ -122,10 +481,6 @@
       },
 
       "rotations_2": {
-        "minecraft:is_chested":{
-        },
-        "minecraft:is_sheared":{
-        },
         "minecraft:interact": {
           "interactions": [
             {
@@ -147,8 +502,6 @@
       },
 
       "rotations_1": {
-        "minecraft:is_sheared":{
-        },
         "minecraft:interact": {
           "interactions": [
             {
@@ -188,6 +541,83 @@
             "event": "standby",
             "target": "self"
           }
+        }
+      },
+
+      //デスポーン 3回殴るとドロップ
+      "to_despawn_1": {
+        "minecraft:ageable": {
+          "duration": 1,
+          "grow_up": {
+            "event": "not_despawn",
+            "target": "self"
+          }
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "player"
+                },
+                "event": "to_despawn_2",
+                "target": "self"
+              },
+              "deals_damage": false,
+              "cause": "all"
+            }
+          ]
+        }
+      },
+      "to_despawn_2": {
+        "minecraft:ageable": {
+          "duration": 1,
+          "grow_up": {
+            "event": "not_despawn",
+            "target": "self"
+          }
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "player"
+                },
+                "event": "to_despawn_3",
+                "target": "self"
+              },
+              "deals_damage": false,
+              "cause": "all"
+            }
+          ]
+        }
+      },
+      "not_despawn": {
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "player"
+                },
+                "event": "to_despawn_1",
+                "target": "self"
+              },
+              "deals_damage": false,
+              "cause": "all"
+            }
+          ]
+        }
+      },
+      "despawn": {
+        "minecraft:instant_despawn":{
         }
       },
 
@@ -246,107 +676,7 @@
       "slot_3_14": { "minecraft:mark_variant": { "value": 14 } },
       "slot_3_15": { "minecraft:mark_variant": { "value": 15 } },
       "slot_3_16": { "minecraft:mark_variant": { "value": 16 } },
-      "slot_3_17": { "minecraft:mark_variant": { "value": 17 } },
-
-      "to_despawn_1": {
-        "minecraft:timer": {
-          "looping": true,
-          "time": 2.0,
-          "time_down_event": {
-            "event": "not_despawn",
-            "target": "self"
-          }
-        },
-        "minecraft:damage_sensor": {
-          "triggers": [
-            {
-              "on_damage": {
-                "filters": {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "player"
-                },
-                "event": "to_despawn_2",
-                "target": "self"
-              },
-              "deals_damage": false,
-              "cause": "all"
-            }
-          ]
-        }
-      },
-
-      "to_despawn_2": {
-        "minecraft:timer": {
-          "looping": true,
-          "time": 2.0,
-          "time_down_event": {
-            "event": "not_despawn",
-            "target": "self"
-          }
-        },
-        "minecraft:damage_sensor": {
-          "triggers": [
-            {
-              "on_damage": {
-                "filters": {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "player"
-                },
-                "event": "to_despawn_3",
-                "target": "self"
-              },
-              "deals_damage": false,
-              "cause": "all"
-            }
-          ]
-        }
-      },
-
-      "to_despawn_3": {
-        "minecraft:timer": {
-          "looping": true,
-          "time": 0.2,
-          "time_down_event": {
-            "event": "despawn",
-            "target": "self"
-          }
-        },
-        "minecraft:damage_sensor": {
-          "triggers": [
-            {
-              "deals_damage": false,
-              "cause": "all"
-            }
-          ]
-        }
-      },
-
-      "not_despawn": {
-        "minecraft:damage_sensor": {
-          "triggers": [
-            {
-              "on_damage": {
-                "filters": {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "player"
-                },
-                "event": "to_despawn_1",
-                "target": "self"
-              },
-              "deals_damage": false,
-              "cause": "all"
-            }
-          ]
-        }
-      },
-        
-      "despawn": {
-        "minecraft:instant_despawn":{
-        }
-      }
+      "slot_3_17": { "minecraft:mark_variant": { "value": 17 } }
     
     },
 
@@ -383,16 +713,11 @@
       },
       "minecraft:physics": {
       },
-      "minecraft:is_stackable": {
-      },
       "minecraft:persistent": {
       },
       "minecraft:pushable": {
         "is_pushable": false,
         "is_pushable_by_piston": true
-      },
-      "minecraft:loot": {
-        "table": "loot_tables/entities/slot_machine_v1.json"
       },
 
       "minecraft:conditional_bandwidth_optimization": {
@@ -412,7 +737,70 @@
 
       "standby": {
         "add": { "component_groups": [ "standby" ] },
-        "remove": { "component_groups": [ "result" ] }
+        "remove": { "component_groups": [ "result", "bet_1" ] },
+        "run_command": {
+          "command": [
+            "tag @s remove bet_1"
+          ]
+        }
+      },
+
+      "bet_1": {
+        "add": { "component_groups": [ "bet_1" ] },
+        "remove": { "component_groups": [ "bet_2" ] },
+        "run_command": {
+          "command": [
+            "tag @s add bet_1",
+            "tag @s remove bet_2"
+          ]
+        }
+      },
+
+      "bet_2": {
+        "add": { "component_groups": [ "bet_2" ] },
+        "remove": { "component_groups": [ "bet_1", "bet_3" ] },
+        "run_command": {
+          "command": [
+            "tag @s add bet_2",
+            "tag @s remove bet_1",
+            "tag @s remove bet_3"
+          ]
+        }
+      },
+
+      "bet_3": {
+        "add": { "component_groups": [ "bet_3" ] },
+        "remove": { "component_groups": [ "bet_2", "bet_4" ] },
+        "run_command": {
+          "command": [
+            "tag @s add bet_3",
+            "tag @s remove bet_2",
+            "tag @s remove bet_4"
+          ]
+        }
+      },
+
+      "bet_4": {
+        "add": { "component_groups": [ "bet_4" ] },
+        "remove": { "component_groups": [ "bet_3", "bet_5" ] },
+        "run_command": {
+          "command": [
+            "tag @s add bet_4",
+            "tag @s remove bet_3",
+            "tag @s remove bet_5"
+          ]
+        }
+      },
+
+      "bet_5": {
+        "add": { "component_groups": [ "bet_5" ] },
+        "remove": { "component_groups": [ "bet_4" ] },
+        "run_command": {
+          "command": [
+            "tag @s add bet_5",
+            "tag @s remove bet_4"
+          ]
+        }
       },
 
       "pulling": {
@@ -425,13 +813,19 @@
 
       "rotations_3": {
         "add": { "component_groups": [ "rotations_3" ] },
-        "remove": { "component_groups": [ "pulling" ] }
+        "remove": { "component_groups": [ "pulling" ] },
+        "set_actor_property":{
+          "slot_machine:rotate_slot_1": true,
+          "slot_machine:rotate_slot_2": true,
+          "slot_machine:rotate_slot_3": true
+        }
       },
 
       "rotations_2": {
         "add": { "component_groups": [ "rotations_2" ] },
         "remove": { "component_groups": [ "rotations_3" ] },
         "set_actor_property":{
+          "slot_machine:rotate_slot_1": false,
           "slot_machine:braking_slot_1": true
         }
       },
@@ -440,6 +834,7 @@
         "add": { "component_groups": [ "rotations_1" ] },
         "remove": { "component_groups": [ "rotations_2" ] },
         "set_actor_property":{
+          "slot_machine:rotate_slot_2": false,
           "slot_machine:braking_slot_2": true
         }
       },
@@ -448,6 +843,7 @@
         "add": { "component_groups": [ "braking" ] },
         "remove": { "component_groups": [ "rotations_1" ] },
         "set_actor_property":{
+          "slot_machine:rotate_slot_3": false,
           "slot_machine:braking_slot_3": true
         }
       },
@@ -466,15 +862,14 @@
       "to_despawn_1": {
         "add": { "component_groups": [ "to_despawn_1" ] }
       },
-
       "to_despawn_2": {
         "add": { "component_groups": [ "to_despawn_2" ] }
       },
-
       "to_despawn_3": {
-        "add": { "component_groups": [ "to_despawn_3" ] }
+        "set_actor_property":{
+          "slot_machine:despawn": true
+        }
       },
-
       "not_despawn": {
         "add": { "component_groups": [ "not_despawn" ] },
         "remove": {
@@ -484,7 +879,6 @@
           ] 
         }
       },
-
       "despawn": {
         "add": { "component_groups": [ "despawn" ] },
         "run_command": {
@@ -492,7 +886,6 @@
             "loot spawn ~~~ loot \"entities/slot_machine_v1\""
           ]
         }
-        
       },
 
       "slot_1_0": { "add": { "component_groups": ["slot_1_0"] } },
