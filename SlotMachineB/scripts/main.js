@@ -20,6 +20,21 @@ world.events.dataDrivenEntityTriggerEvent.subscribe(event => {
         amount += role_data[i];
         //dim.runCommand("say " + String(i));
       }
+      if(entity.hasTag('bet_2')){
+        amount *= 2;
+        entity.removeTag('bet_2');
+      } else if(entity.hasTag('bet_3')){
+        amount *= 3;
+        entity.removeTag('bet_3');
+      } else if(entity.hasTag('bet_4')){
+        amount *= 4;
+        entity.removeTag('bet_4');
+      } else if(entity.hasTag('bet_5')){
+        amount *= 5;
+        entity.removeTag('bet_5');
+      } else {
+        entity.removeTag('bet_1');
+      }
       let entity_query_options = new EntityQueryOptions();
       entity_query_options.location = entity.location;
       entity_query_options.maxDistance = 10;
@@ -70,12 +85,12 @@ function propertyToSlotData(property, slot_data){
 
 const max_slot = 18;
 const role_data = {
-  "diamond": 7,
-  "sweet_berries": 1,
-  "melon": 1,
-  "emerald": 2.0,
-  "apple_golden": 3,
-  "amethyst_shard": 5,
+  "diamond": 8,
+  "sweet_berries": 2,
+  "melon": 3,
+  "emerald": 4.0,
+  "apple_golden": 5,
+  "amethyst_shard": 6,
   "nether_star": 10
 };
 const slot_1_data = {

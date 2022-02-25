@@ -13,7 +13,7 @@
       "minecraft:display_name": {
         "value": "slot machine"
       },
-      "minecraft:max_stack_size": 1,
+      //"minecraft:max_stack_size": 1,
       "minecraft:liquid_clipped": true,
       "minecraft:entity_placer":{
         "entity" : "slot_machine:v1"
