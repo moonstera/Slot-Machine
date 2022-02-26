@@ -20,7 +20,7 @@ Minecraft Bedrock Edition専用のアドオンです。
  ・役のポイント  
   diamond: 8  
   sweet_berries: 2  
-  melon": 3  
+  melon: 3  
   emerald: 4  
   apple_golden: 5  
   amethyst_shard: 6  
