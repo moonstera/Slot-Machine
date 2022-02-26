@@ -1,6 +1,7 @@
 # Slot-Machine Addon
 Minecraft Bedrock Edition専用のアドオンです。  
-スロットマシンを追加します。
+スロットマシンを追加します。  
+![スロットマシン](https://imgur.com/a/5VVrXcN.png, "スロットマシン")
 
 ## ダウンロード
 [最新バージョン](https://github.com/moonstera/Slot-Machine/releases/download/latest/SlotMachine.mcaddon)
@@ -15,13 +16,19 @@ Minecraft Bedrock Edition専用のアドオンです。
  `preview 1.18.20.26`
 
 # 機能
+ プレイするにはエメラルドを賭ける必要があります。エメラルドをもってスロットマシンを右クリック(スマホだと長押しか、アクションボタン)で最大で5つまで賭けることができ、スニークしながら右クリックするとエメラルドを返してくれます。そしてエメラルド以外をもって右クリックをするとスロットを引けます。その後は右クリックするたびにスロットを止めることができ、役がそろうと賭けたエメラルド×役の合計ポイントの個数分エメラルドを得ることができます。  
+ ・役のポイント
+  diamond: 8  
+  sweet_berries: 2  
+  melon": 3  
+  emerald: 4  
+  apple_golden: 5  
+  amethyst_shard: 6  
+  nether_star: 10
  
-
-## 注意点
  
+## レシピ
+![レシピ](https://imgur.com/a/tKTkpnl.png, "レシピ")
 
 ## ライセンス
 [MIT](https://github.com/moonstera/Direction-Bar/blob/main/LICENSE)
-
-## 既知の不具合
-
