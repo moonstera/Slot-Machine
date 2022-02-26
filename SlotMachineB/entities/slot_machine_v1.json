@@ -470,7 +470,7 @@
                 "event": "rotations_2",
                 "target": "self"
               },
-              "interact_text": "rotations_3",
+              "interact_text": "push",
               "play_sounds": "piston.in",
               "swing": true,
               "cooldown": 0.0,
@@ -491,7 +491,7 @@
                 "event": "rotations_1",
                 "target": "self"
               },
-              "interact_text": "rotations_2",
+              "interact_text": "push",
               "play_sounds": "piston.in",
               "swing": true,
               "cooldown": 0.0,
@@ -512,7 +512,7 @@
                 "event": "braking",
                 "target": "self"
               },
-              "interact_text": "rotations_1",
+              "interact_text": "push",
               "play_sounds": "piston.in",
               "swing": true,
               "cooldown": 0.0,
@@ -737,70 +737,32 @@
 
       "standby": {
         "add": { "component_groups": [ "standby" ] },
-        "remove": { "component_groups": [ "result", "bet_1" ] },
-        "run_command": {
-          "command": [
-            "tag @s remove bet_1"
-          ]
-        }
+        "remove": { "component_groups": [ "result", "bet_1" ] }
       },
 
       "bet_1": {
         "add": { "component_groups": [ "bet_1" ] },
-        "remove": { "component_groups": [ "bet_2" ] },
-        "run_command": {
-          "command": [
-            "tag @s add bet_1",
-            "tag @s remove bet_2"
-          ]
-        }
+        "remove": { "component_groups": [ "bet_2" ] }
       },
 
       "bet_2": {
         "add": { "component_groups": [ "bet_2" ] },
-        "remove": { "component_groups": [ "bet_1", "bet_3" ] },
-        "run_command": {
-          "command": [
-            "tag @s add bet_2",
-            "tag @s remove bet_1",
-            "tag @s remove bet_3"
-          ]
-        }
+        "remove": { "component_groups": [ "bet_1", "bet_3" ] }
       },
 
       "bet_3": {
         "add": { "component_groups": [ "bet_3" ] },
-        "remove": { "component_groups": [ "bet_2", "bet_4" ] },
-        "run_command": {
-          "command": [
-            "tag @s add bet_3",
-            "tag @s remove bet_2",
-            "tag @s remove bet_4"
-          ]
-        }
+        "remove": { "component_groups": [ "bet_2", "bet_4" ] }
       },
 
       "bet_4": {
         "add": { "component_groups": [ "bet_4" ] },
-        "remove": { "component_groups": [ "bet_3", "bet_5" ] },
-        "run_command": {
-          "command": [
-            "tag @s add bet_4",
-            "tag @s remove bet_3",
-            "tag @s remove bet_5"
-          ]
-        }
+        "remove": { "component_groups": [ "bet_3", "bet_5" ] }
       },
 
       "bet_5": {
         "add": { "component_groups": [ "bet_5" ] },
-        "remove": { "component_groups": [ "bet_4" ] },
-        "run_command": {
-          "command": [
-            "tag @s add bet_5",
-            "tag @s remove bet_4"
-          ]
-        }
+        "remove": { "component_groups": [ "bet_4" ] }
       },
 
       "pulling": {
@@ -880,12 +842,7 @@
         }
       },
       "despawn": {
-        "add": { "component_groups": [ "despawn" ] },
-        "run_command": {
-          "command": [
-            "loot spawn ~~~ loot \"entities/slot_machine_v1\""
-          ]
-        }
+        "add": { "component_groups": [ "despawn" ] }
       },
 
       "slot_1_0": { "add": { "component_groups": ["slot_1_0"] } },

@@ -1,54 +1,78 @@
-import { world, ItemStack, EntityDataDrivenTriggerEventOptions, BlockLocation, Vector, MinecraftItemTypes, EntityQueryOptions, SoundOptions, EntityEventOptions } from "mojang-minecraft";
+import { world, ItemStack, EntityDataDrivenTriggerEventOptions, BlockLocation, Items, MinecraftItemTypes, EntityQueryOptions, SoundOptions, EntityEventOptions } from "mojang-minecraft";
 
 let result_event_option = new EntityDataDrivenTriggerEventOptions();
 result_event_option.entityTypes = ["slot_machine:v1"];
-result_event_option.eventTypes = ["result"];
+result_event_option.eventTypes = ["result","standby", "bet_1", "bet_2", "bet_3", "bet_4", "bet_5", "despawn"];
 world.events.dataDrivenEntityTriggerEvent.subscribe(event => {
   try{
     let entity = event.entity;
     let dim = event.entity.dimension;
-    let skin_id = entity.getComponent('skin_id').value;
-    let variant = entity.getComponent('variant').value;
-    let mark_variant = entity.getComponent('mark_variant').value;
-    let slot_1_data_3 = propertyToSlotData(skin_id, slot_1_data);
-    let slot_2_data_3 = propertyToSlotData(variant, slot_2_data);
-    let slot_3_data_3 = propertyToSlotData(mark_variant, slot_3_data);
-    let bingo = getBingo(slot_1_data_3, slot_2_data_3, slot_3_data_3);
-    let amount = 0;
-    if(bingo.length > 0){
-      for(let i of bingo){
-        amount += role_data[i];
-        //dim.runCommand("say " + String(i));
-      }
-      if(entity.hasTag('bet_2')){
-        amount *= 2;
-        entity.removeTag('bet_2');
-      } else if(entity.hasTag('bet_3')){
-        amount *= 3;
-        entity.removeTag('bet_3');
-      } else if(entity.hasTag('bet_4')){
-        amount *= 4;
-        entity.removeTag('bet_4');
-      } else if(entity.hasTag('bet_5')){
-        amount *= 5;
-        entity.removeTag('bet_5');
+    if(event.id == "result"){
+      let skin_id = entity.getComponent('skin_id').value;
+      let variant = entity.getComponent('variant').value;
+      let mark_variant = entity.getComponent('mark_variant').value;
+      let slot_1_data_3 = propertyToSlotData(skin_id, slot_1_data);
+      let slot_2_data_3 = propertyToSlotData(variant, slot_2_data);
+      let slot_3_data_3 = propertyToSlotData(mark_variant, slot_3_data);
+      let bingo = getBingo(slot_1_data_3, slot_2_data_3, slot_3_data_3);
+      let amount = 0;
+      if(bingo.length > 0){
+        for(let i of bingo){
+          amount += role_data[i];
+          //dim.runCommand("say " + String(i));
+        }
+        if(entity.hasTag('bet_2')){
+          amount *= 2;
+          entity.removeTag('bet_2');
+        } else if(entity.hasTag('bet_3')){
+          amount *= 3;
+          entity.removeTag('bet_3');
+        } else if(entity.hasTag('bet_4')){
+          amount *= 4;
+          entity.removeTag('bet_4');
+        } else if(entity.hasTag('bet_5')){
+          amount *= 5;
+          entity.removeTag('bet_5');
+        } else {
+          entity.removeTag('bet_1');
+        }
+        let entity_query_options = new EntityQueryOptions();
+        entity_query_options.location = entity.location;
+        entity_query_options.maxDistance = 10;
+        let players = dim.getPlayers(entity_query_options);
+        let sound_options = new SoundOptions();
+        sound_options.location = entity.location;
+        for(let player of players){
+          world.playSound("random.levelup", sound_options);
+        }
+        let item_stack = new ItemStack(MinecraftItemTypes.emerald, amount, 0);
+        let items = dim.spawnItem(item_stack, new BlockLocation(entity.location.x, entity.location.y, entity.location.z));
+        items.setVelocity(entity.viewVector);
       } else {
-        entity.removeTag('bet_1');
+        //dim.runCommand("say なし");
       }
-      let entity_query_options = new EntityQueryOptions();
-      entity_query_options.location = entity.location;
-      entity_query_options.maxDistance = 10;
-      let players = dim.getPlayers(entity_query_options);
-      let sound_options = new SoundOptions();
-      sound_options.location = entity.location;
-      for(let player of players){
-        world.playSound("random.levelup", sound_options);
-      }
-      let item_stack = new ItemStack(MinecraftItemTypes.emerald, amount, 0);
-      let items = dim.spawnItem(item_stack, new BlockLocation(entity.location.x, entity.location.y, entity.location.z));
-      items.setVelocity(entity.viewVector);
-    } else {
-      //dim.runCommand("say なし");
+    } else if(event.id == "standby"){
+      entity.removeTag('bet_1');
+    } else if(event.id == "bet_1"){
+      entity.addTag("bet_1");
+      entity.removeTag('bet_2');
+    } else if(event.id == "bet_2"){
+      entity.addTag("bet_2");
+      entity.removeTag('bet_1');
+      entity.removeTag('bet_3');
+    } else if(event.id == "bet_3"){
+      entity.addTag("bet_3");
+      entity.removeTag('bet_2');
+      entity.removeTag('bet_4');
+    } else if(event.id == "bet_4"){
+      entity.addTag("bet_4");
+      entity.removeTag('bet_3');
+      entity.removeTag('bet_5');
+    } else if(event.id == "bet_5"){
+      entity.addTag("bet_5");
+      entity.removeTag('bet_4');
+    } else if(event.id == "despawn"){
+      dim.spawnItem(new ItemStack(Items.get("slot_machine:v1"), 1), entity.location);
     }
     //let dim = event.entity.dimension;
     //dim.runCommand("say " + String(event.id));
