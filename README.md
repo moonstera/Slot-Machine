@@ -1,7 +1,7 @@
 # Slot-Machine Addon
 Minecraft Bedrock Edition専用のアドオンです。  
 スロットマシンを追加します。  
-![スロットマシン](https://imgur.com/a/5VVrXcN.png, "スロットマシン")
+![スロットマシン](https://i.imgur.com/YYzGAcu.png, "スロットマシン")
 
 ## ダウンロード
 [最新バージョン](https://github.com/moonstera/Slot-Machine/releases/download/latest/SlotMachine.mcaddon)
@@ -28,7 +28,7 @@ Minecraft Bedrock Edition専用のアドオンです。
  
  
 ## レシピ
-![レシピ](https://imgur.com/a/tKTkpnl.png, "レシピ")
+![レシピ](https://i.imgur.com/lByAT2H.png, "レシピ")
 
 ## ライセンス
 [MIT](https://github.com/moonstera/Direction-Bar/blob/main/LICENSE)
