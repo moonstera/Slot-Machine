@@ -725,7 +725,7 @@
 
     },
 
-    "events": {   
+    "events": {
       "minecraft:entity_spawned":{
         "add": {
           "component_groups": [
