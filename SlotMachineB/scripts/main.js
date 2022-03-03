@@ -51,6 +51,17 @@ world.events.dataDrivenEntityTriggerEvent.subscribe(event => {
       } else {
         //dim.runCommand("say なし");
       }
+      if(entity.hasTag('bet_5')){
+        entity.removeTag('bet_5');
+      } else if(entity.hasTag('bet_4')){
+        entity.removeTag('bet_4');
+      } else if(entity.hasTag('bet_3')){
+        entity.removeTag('bet_3');
+      } else if(entity.hasTag('bet_2')){
+        entity.removeTag('bet_2');
+      } else if(entity.hasTag('bet_1')){
+        entity.removeTag('bet_1');
+      }
     } else if(event.id == "standby"){
       entity.removeTag('bet_1');
     } else if(event.id == "bet_1"){
@@ -73,6 +84,17 @@ world.events.dataDrivenEntityTriggerEvent.subscribe(event => {
       entity.removeTag('bet_4');
     } else if(event.id == "despawn"){
       dim.spawnItem(new ItemStack(Items.get("slot_machine:v1"), 1), entity.location);
+      if(entity.hasTag('bet_5')){
+        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 5), entity.location);
+      } else if(entity.hasTag('bet_4')){
+        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 4), entity.location);
+      } else if(entity.hasTag('bet_3')){
+        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 3), entity.location);
+      } else if(entity.hasTag('bet_2')){
+        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 2), entity.location);
+      } else if(entity.hasTag('bet_1')){
+        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 1), entity.location);
+      }
     }
     //let dim = event.entity.dimension;
     //dim.runCommand("say " + String(event.id));
@@ -80,6 +102,27 @@ world.events.dataDrivenEntityTriggerEvent.subscribe(event => {
     console.error(error);
   }
 }, result_event_option);
+
+world.events.entityCreate.subscribe(event => {
+  let entity = event.entity;
+  if(entity.id == "slot_machine:v1"){
+    let direction = getDirection(entity.bodyRotation);
+    entity.teleport(entity.location, entity.dimension, 0, direction);
+  }
+});
+
+function getDirection(rotation){
+  let direction = 0;
+  if(rotation > 45 && rotation <= 135){
+    direction = 90;
+  } else if(rotation > 135 || rotation <= -135){
+    direction = -180;
+  } else if(rotation > -135 && rotation <= -45){
+    direction = -90;
+  }
+  return direction
+}
+
 
 function getBingo(slot_1, slot_2, slot_3){
   let bingo = [];
