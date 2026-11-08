@@ -2,7 +2,7 @@
 
 Minecraft Bedrock Edition 専用のアドオンです。スロットマシンを追加します。
 
-![スロットマシン v2](docs/views.png)
+![スロットマシン v2](docs/screenshot.jpg)
 
 ## ダウンロード
 
