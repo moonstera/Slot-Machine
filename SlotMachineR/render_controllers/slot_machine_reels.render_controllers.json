@@ -1,0 +1,76 @@
+{
+  "format_version": "1.8.0",
+  "render_controllers": {
+    "controller.render.slot_machine.reels": {
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "arrays": {
+        "textures": {
+          "Array.themes": [
+            "Texture.default",
+            "Texture.ores",
+            "Texture.food",
+            "Texture.mobs"
+          ]
+        }
+      },
+      "textures": [
+        "Array.themes[q.property('slot_machine:theme')]"
+      ],
+      "part_visibility": [
+        {
+          "*": "true"
+        },
+        {
+          "bet_on_1": "q.property('slot_machine:lamps') >= 1"
+        },
+        {
+          "bet_off_1": "q.property('slot_machine:lamps') < 1"
+        },
+        {
+          "bet_on_2": "q.property('slot_machine:lamps') >= 2"
+        },
+        {
+          "bet_off_2": "q.property('slot_machine:lamps') < 2"
+        },
+        {
+          "bet_on_3": "q.property('slot_machine:lamps') >= 3"
+        },
+        {
+          "bet_off_3": "q.property('slot_machine:lamps') < 3"
+        },
+        {
+          "bet_on_4": "q.property('slot_machine:lamps') >= 4"
+        },
+        {
+          "bet_off_4": "q.property('slot_machine:lamps') < 4"
+        },
+        {
+          "bet_on_5": "q.property('slot_machine:lamps') >= 5"
+        },
+        {
+          "bet_off_5": "q.property('slot_machine:lamps') < 5"
+        },
+        {
+          "win_on": "q.property('slot_machine:win')"
+        }
+      ],
+      "is_hurt_color": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 0
+      },
+      "on_fire_color": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 0
+      }
+    }
+  }
+}

@@ -1,224 +1,575 @@
-import { world, ItemStack, EntityDataDrivenTriggerEventOptions, BlockLocation, Items, MinecraftItemTypes, EntityQueryOptions, SoundOptions, EntityEventOptions } from "mojang-minecraft";
-
-let result_event_option = new EntityDataDrivenTriggerEventOptions();
-result_event_option.entityTypes = ["slot_machine:v1"];
-result_event_option.eventTypes = ["result","standby", "bet_1", "bet_2", "bet_3", "bet_4", "bet_5", "despawn"];
-world.events.dataDrivenEntityTriggerEvent.subscribe(event => {
-  try{
-    let entity = event.entity;
-    let dim = event.entity.dimension;
-    if(event.id == "result"){
-      let skin_id = entity.getComponent('skin_id').value;
-      let variant = entity.getComponent('variant').value;
-      let mark_variant = entity.getComponent('mark_variant').value;
-      let slot_1_data_3 = propertyToSlotData(skin_id, slot_1_data);
-      let slot_2_data_3 = propertyToSlotData(variant, slot_2_data);
-      let slot_3_data_3 = propertyToSlotData(mark_variant, slot_3_data);
-      let bingo = getBingo(slot_1_data_3, slot_2_data_3, slot_3_data_3);
-      let amount = 0;
-      if(bingo.length > 0){
-        for(let i of bingo){
-          amount += role_data[i];
-          //dim.runCommand("say " + String(i));
-        }
-        if(entity.hasTag('bet_2')){
-          amount *= 2;
-          entity.removeTag('bet_2');
-        } else if(entity.hasTag('bet_3')){
-          amount *= 3;
-          entity.removeTag('bet_3');
-        } else if(entity.hasTag('bet_4')){
-          amount *= 4;
-          entity.removeTag('bet_4');
-        } else if(entity.hasTag('bet_5')){
-          amount *= 5;
-          entity.removeTag('bet_5');
-        } else {
-          entity.removeTag('bet_1');
-        }
-        let entity_query_options = new EntityQueryOptions();
-        entity_query_options.location = entity.location;
-        entity_query_options.maxDistance = 10;
-        let players = dim.getPlayers(entity_query_options);
-        let sound_options = new SoundOptions();
-        sound_options.location = entity.location;
-        for(let player of players){
-          world.playSound("random.levelup", sound_options);
-        }
-        let item_stack = new ItemStack(MinecraftItemTypes.emerald, amount, 0);
-        let items = dim.spawnItem(item_stack, new BlockLocation(entity.location.x, entity.location.y, entity.location.z));
-        items.setVelocity(entity.viewVector);
-      } else {
-        //dim.runCommand("say なし");
-      }
-      if(entity.hasTag('bet_5')){
-        entity.removeTag('bet_5');
-      } else if(entity.hasTag('bet_4')){
-        entity.removeTag('bet_4');
-      } else if(entity.hasTag('bet_3')){
-        entity.removeTag('bet_3');
-      } else if(entity.hasTag('bet_2')){
-        entity.removeTag('bet_2');
-      } else if(entity.hasTag('bet_1')){
-        entity.removeTag('bet_1');
-      }
-    } else if(event.id == "standby"){
-      entity.removeTag('bet_1');
-    } else if(event.id == "bet_1"){
-      entity.addTag("bet_1");
-      entity.removeTag('bet_2');
-    } else if(event.id == "bet_2"){
-      entity.addTag("bet_2");
-      entity.removeTag('bet_1');
-      entity.removeTag('bet_3');
-    } else if(event.id == "bet_3"){
-      entity.addTag("bet_3");
-      entity.removeTag('bet_2');
-      entity.removeTag('bet_4');
-    } else if(event.id == "bet_4"){
-      entity.addTag("bet_4");
-      entity.removeTag('bet_3');
-      entity.removeTag('bet_5');
-    } else if(event.id == "bet_5"){
-      entity.addTag("bet_5");
-      entity.removeTag('bet_4');
-    } else if(event.id == "despawn"){
-      dim.spawnItem(new ItemStack(Items.get("slot_machine:v1"), 1), entity.location);
-      if(entity.hasTag('bet_5')){
-        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 5), entity.location);
-      } else if(entity.hasTag('bet_4')){
-        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 4), entity.location);
-      } else if(entity.hasTag('bet_3')){
-        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 3), entity.location);
-      } else if(entity.hasTag('bet_2')){
-        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 2), entity.location);
-      } else if(entity.hasTag('bet_1')){
-        dim.spawnItem(new ItemStack(MinecraftItemTypes.emerald, 1), entity.location);
-      }
+/**
+ * Slot Machine v2  (@minecraft/server 2.11.0, @minecraft/server-ui 2.3.0, no experiments)
+ *
+ * The cabinet is a 2-block multi-block (slot_machine:v1). The moving parts (reels, lever, lamps)
+ * are drawn by a display-only entity (slot_machine:reels) that stands in the lower block.
+ * All game logic lives here; the entity only mirrors the state as synced properties.
+ *
+ * Link between block and entity (2.1.0):
+ *  - Each machine has a key = "<dimension>|x,y,z" of its LOWER block. The block cannot hold data, so the key is
+ *    its position.
+ *  - The entity stores the key in the dynamic property "slot_machine:home" (written when it is spawned).
+ *  - The machine settings are stored in a world dynamic property "slot_machine:cfg|<key>", so they survive even
+ *    if the entity is lost (/kill) and are deleted when the block is broken.
+ *  - Block -> entity: the entity at the block position whose home equals the key (extra ones are removed).
+ *  - Entity -> block: a watchdog checks every 2 s that the block at "home" is still a slot machine; if the block
+ *    was removed without onBreak (e.g. /setblock in replace mode), the bet is refunded and the entity removed.
+ *
+ * Rules:
+ *  - Hold an emerald and use the machine: bet 1 emerald (up to the machine's max bet, default 5).
+ *  - Sneak and use: take 1 emerald back.
+ *  - Use with anything else: pull the lever. Use again to stop reel 1, 2, 3.
+ *  - 5 lines (top, middle, bottom, 2 diagonals). Each line pays its symbol's points x bet x multiplier.
+ *  - Hit the machine with the settings tool (slot_machine:config_tool, operators only) to change the settings.
+ */
+import { world, system, ItemStack, Player, GameMode, EntityComponentTypes, EquipmentSlot, MolangVariableMap, PlayerPermissionLevel, } from "@minecraft/server";
+import { ModalFormData } from "@minecraft/server-ui";
+const NS = "slot_machine";
+const BLOCK_ID = `${NS}:v1`;
+const REELS_ID = `${NS}:reels`;
+const TOOL_ID = `${NS}:config_tool`;
+const BET_LIMIT = 64; // largest max bet the settings allow (= range of the "bet" property)
+const SYMBOLS = 18;
+const SYM_LIST = ["sweet_berries", "melon", "emerald", "apple_golden", "amethyst_shard", "diamond", "nether_star"];
+const DEFAULT_POINTS = {
+    diamond: 8, sweet_berries: 2, melon: 3, emerald: 4, apple_golden: 5, amethyst_shard: 6, nether_star: 10,
+};
+const THEMES = [
+    { id: "classic", items: [["sweet_berries", "item.sweet_berries.name"], ["melon", "item.melon.name"], ["emerald", "item.emerald.name"],
+            ["apple_golden", "item.golden_apple.name"], ["amethyst_shard", "item.amethyst_shard.name"], ["diamond", "item.diamond.name"],
+            ["nether_star", "item.netherStar.name"]] },
+    { id: "ores", items: [["coal", "item.coal.name"], ["copper_ingot", "item.copper_ingot.name"], ["iron_ingot", "item.iron_ingot.name"],
+            ["gold_ingot", "item.gold_ingot.name"], ["dye_powder_blue_new", "item.dye.blue.name"], ["diamond", "item.diamond.name"],
+            ["netherite_ingot", "item.netherite_ingot.name"]] },
+    { id: "food", items: [["cookie", "item.cookie.name"], ["bread", "item.bread.name"], ["apple", "item.apple.name"],
+            ["beef_cooked", "item.cooked_beef.name"], ["pumpkin_pie", "item.pumpkin_pie.name"], ["carrot_golden", "item.golden_carrot.name"],
+            ["cake", "item.cake.name"]] },
+    { id: "mobs", items: [["rotten_flesh", "item.rotten_flesh.name"], ["bone", "item.bone.name"], ["string", "item.string.name"],
+            ["spider_eye", "item.spider_eye.name"], ["gunpowder", "item.gunpowder.name"], ["ender_pearl", "item.ender_pearl.name"],
+            ["totem", "item.totem.name"]] },
+];
+const themeItem = (theme, s) => (THEMES[theme] ?? THEMES[0]).items[SYM_LIST.indexOf(s)];
+// reel strips per theme (index = theme). Each texture draws strip k at x 2+17k, symbol i at uv y = 16 * i.
+// Every theme has the same symbols the same number of times as the classic (v0.0.1) strips, in its own order.
+// ---- generated by `python3 themes.py --ts` (do not edit by hand) ----
+const STRIPS = [
+    [
+        ["diamond", "sweet_berries", "melon", "apple_golden", "emerald", "nether_star", "sweet_berries", "melon", "amethyst_shard", "emerald", "apple_golden", "sweet_berries", "emerald", "melon", "amethyst_shard", "emerald", "sweet_berries", "apple_golden"],
+        ["diamond", "apple_golden", "sweet_berries", "melon", "amethyst_shard", "emerald", "melon", "sweet_berries", "nether_star", "emerald", "apple_golden", "emerald", "sweet_berries", "melon", "emerald", "amethyst_shard", "apple_golden", "sweet_berries"],
+        ["diamond", "emerald", "apple_golden", "sweet_berries", "melon", "amethyst_shard", "melon", "emerald", "sweet_berries", "melon", "nether_star", "apple_golden", "emerald", "sweet_berries", "melon", "amethyst_shard", "sweet_berries", "emerald"],
+    ],
+    [
+        ["apple_golden", "diamond", "nether_star", "sweet_berries", "melon", "apple_golden", "emerald", "apple_golden", "sweet_berries", "amethyst_shard", "emerald", "sweet_berries", "melon", "emerald", "sweet_berries", "melon", "emerald", "amethyst_shard"],
+        ["apple_golden", "amethyst_shard", "melon", "diamond", "emerald", "melon", "sweet_berries", "amethyst_shard", "emerald", "apple_golden", "sweet_berries", "emerald", "melon", "apple_golden", "emerald", "sweet_berries", "nether_star", "sweet_berries"],
+        ["melon", "emerald", "amethyst_shard", "sweet_berries", "apple_golden", "melon", "nether_star", "emerald", "melon", "sweet_berries", "emerald", "amethyst_shard", "sweet_berries", "melon", "emerald", "diamond", "apple_golden", "sweet_berries"],
+    ],
+    [
+        ["amethyst_shard", "melon", "apple_golden", "amethyst_shard", "apple_golden", "emerald", "nether_star", "melon", "sweet_berries", "melon", "emerald", "diamond", "sweet_berries", "apple_golden", "emerald", "sweet_berries", "emerald", "sweet_berries"],
+        ["apple_golden", "sweet_berries", "emerald", "diamond", "apple_golden", "melon", "emerald", "melon", "sweet_berries", "amethyst_shard", "emerald", "apple_golden", "nether_star", "sweet_berries", "emerald", "sweet_berries", "amethyst_shard", "melon"],
+        ["emerald", "nether_star", "emerald", "sweet_berries", "melon", "amethyst_shard", "diamond", "sweet_berries", "melon", "sweet_berries", "amethyst_shard", "sweet_berries", "emerald", "melon", "emerald", "apple_golden", "melon", "apple_golden"],
+    ],
+    [
+        ["melon", "emerald", "apple_golden", "melon", "apple_golden", "sweet_berries", "melon", "sweet_berries", "emerald", "amethyst_shard", "apple_golden", "nether_star", "emerald", "sweet_berries", "emerald", "amethyst_shard", "sweet_berries", "diamond"],
+        ["melon", "sweet_berries", "emerald", "amethyst_shard", "melon", "sweet_berries", "apple_golden", "emerald", "melon", "sweet_berries", "apple_golden", "amethyst_shard", "nether_star", "emerald", "sweet_berries", "emerald", "apple_golden", "diamond"],
+        ["melon", "amethyst_shard", "emerald", "melon", "diamond", "amethyst_shard", "sweet_berries", "emerald", "sweet_berries", "emerald", "apple_golden", "emerald", "melon", "sweet_berries", "nether_star", "apple_golden", "melon", "sweet_berries"],
+    ],
+];
+// ---- end generated ----
+const YAW = { south: 0, west: 90, north: 180, east: -90 };
+const MULTIPLIERS = [0.5, 1, 1.5, 2, 3, 5, 10];
+const P = (name) => `${NS}:${name}`;
+const getInt = (e, n) => e.getProperty(P(n)) ?? 0;
+const DEFAULT_CONFIG = { maxBet: 5, mult: 1, theme: 0, points: { ...DEFAULT_POINTS } };
+const CFG_PREFIX = `${NS}:cfg|`;
+const CFG_DEFAULT = `${NS}:cfg_default`; // what newly placed machines start with
+const cfgCache = new Map();
+function parseConfig(raw, fallback) {
+    if (typeof raw !== "string")
+        return structuredCloneConfig(fallback);
+    try {
+        const j = JSON.parse(raw);
+        const c = structuredCloneConfig(fallback);
+        if (Number.isInteger(j.maxBet))
+            c.maxBet = Math.min(BET_LIMIT, Math.max(1, j.maxBet));
+        if (typeof j.mult === "number" && j.mult > 0)
+            c.mult = j.mult;
+        if (Number.isInteger(j.theme) && j.theme >= 0 && j.theme < THEMES.length)
+            c.theme = j.theme;
+        for (const s of SYM_LIST)
+            if (Number.isInteger(j.points?.[s]))
+                c.points[s] = Math.max(0, j.points[s]);
+        return c;
     }
-    //let dim = event.entity.dimension;
-    //dim.runCommand("say " + String(event.id));
-  } catch(error){
-    console.error(error);
-  }
-}, result_event_option);
-
-world.events.entityCreate.subscribe(event => {
-  let entity = event.entity;
-  if(entity.id == "slot_machine:v1"){
-    let direction = getDirection(entity.bodyRotation);
-    entity.teleport(entity.location, entity.dimension, 0, direction);
-  }
+    catch {
+        return structuredCloneConfig(fallback);
+    }
+}
+function structuredCloneConfig(c) { return { maxBet: c.maxBet, mult: c.mult, theme: c.theme, points: { ...c.points } }; }
+function defaultConfig() { return parseConfig(world.getDynamicProperty(CFG_DEFAULT), DEFAULT_CONFIG); }
+function configOf(key) {
+    let c = cfgCache.get(key);
+    if (!c) {
+        c = parseConfig(world.getDynamicProperty(CFG_PREFIX + key), defaultConfig());
+        cfgCache.set(key, c);
+    }
+    return c;
+}
+function saveConfig(key, c) {
+    cfgCache.set(key, c);
+    world.setDynamicProperty(CFG_PREFIX + key, JSON.stringify(c)); // only when the form is submitted, not every tick
+}
+function deleteConfig(key) {
+    cfgCache.delete(key);
+    world.setDynamicProperty(CFG_PREFIX + key, undefined);
+}
+// ---------------------------------------------------------------- helpers
+function basePart(block) {
+    const part = block.permutation.getState("minecraft:multi_block_part");
+    return part === 1 ? block.below() : block;
+}
+const centre = (b) => ({ x: b.location.x + 0.5, y: b.location.y, z: b.location.z + 0.5 });
+const keyOf = (dimId, l) => `${dimId}|${Math.floor(l.x)},${Math.floor(l.y)},${Math.floor(l.z)}`;
+const HOME = `${NS}:home`;
+const PENDING = `${NS}:pending`; // emeralds won but not dropped yet (entity dynamic property)
+const paying = new Set(); // entities whose payout is running in this session
+function parseKey(key) {
+    const m = /^(.+)\|(-?\d+),(-?\d+),(-?\d+)$/.exec(key);
+    return m ? { dim: m[1], loc: { x: +m[2], y: +m[3], z: +m[4] } } : undefined;
+}
+/** the reels entity of this machine; extra entities at the same spot (duplicates) are removed */
+function findReels(base) {
+    const key = keyOf(base.dimension.id, base.location);
+    let found;
+    for (const e of base.dimension.getEntities({ type: REELS_ID, location: centre(base), maxDistance: 0.75 })) {
+        const home = e.getDynamicProperty(HOME);
+        if (home === undefined)
+            e.setDynamicProperty(HOME, key); // entities from 2.0.x get linked now
+        else if (home !== key)
+            continue;
+        if (!found)
+            found = e;
+        else {
+            refundAndRemove(e);
+        } // duplicate
+    }
+    return found;
+}
+function spawnReels(base) {
+    const dir = base.permutation.getState("minecraft:cardinal_direction");
+    // initialRotation: the entity (and its body) faces the right way from the very first frame.
+    const e = base.dimension.spawnEntity(REELS_ID, centre(base), { initialRotation: YAW[dir] ?? 0 });
+    e.setDynamicProperty(HOME, keyOf(base.dimension.id, base.location));
+    return e;
+}
+function give(dim, at, typeId, amount, toward) {
+    while (amount > 0) {
+        const n = Math.min(64, amount);
+        amount -= n;
+        const item = dim.spawnItem(new ItemStack(typeId, n), at);
+        if (toward)
+            item.applyImpulse({ x: toward.x * 0.08, y: 0.12, z: toward.z * 0.08 });
+    }
+}
+function frontVector(base) {
+    const dir = base.permutation.getState("minecraft:cardinal_direction");
+    return { north: { x: 0, y: 0, z: -1 }, south: { x: 0, y: 0, z: 1 }, east: { x: 1, y: 0, z: 0 },
+        west: { x: -1, y: 0, z: 0 } }[dir] ?? { x: 0, y: 0, z: 1 };
+}
+function takeOneEmerald(player) {
+    if (player.getGameMode() === GameMode.Creative)
+        return true;
+    const eq = player.getComponent(EntityComponentTypes.Equippable);
+    const held = eq?.getEquipment(EquipmentSlot.Mainhand);
+    if (!eq || held?.typeId !== "minecraft:emerald")
+        return false;
+    if (held.amount <= 1)
+        eq.setEquipment(EquipmentSlot.Mainhand, undefined);
+    else {
+        held.amount -= 1;
+        eq.setEquipment(EquipmentSlot.Mainhand, held);
+    }
+    return true;
+}
+function sound(dim, at, id, pitch = 1, volume = 1) {
+    for (const p of dim.getPlayers({ location: at, maxDistance: 16 }))
+        p.playSound(id, { location: at, pitch, volume });
+}
+function particle(dim, id, at, vars) {
+    try {
+        dim.spawnParticle(id, at, vars);
+    }
+    catch { /* chunk not loaded */ }
+}
+const states = new Map();
+const COOLDOWN = 3; // ticks between two accepted clicks on one machine
+function stateOf(e) {
+    let st = states.get(e.id);
+    if (!st) {
+        st = { bet: getInt(e, "bet"), spin: getInt(e, "spin"), reels: [1, 2, 3].map((k) => getInt(e, `reel${k}`)),
+            busy: false, next: 0 };
+        states.set(e.id, st);
+        syncLooks(e, st);
+    }
+    return st;
+}
+function setBet(e, st, v) { st.bet = v; e.setProperty(P("bet"), v); syncLooks(e, st); }
+/** bet lamps show the share of the max bet (1..5 lamps), and the reel texture follows the theme.
+ *  Recomputed from the script state every time (also by the watchdog), so the display cannot stay stale. */
+function lampsFor(bet, maxBet) { return bet <= 0 ? 0 : Math.min(5, Math.max(1, Math.ceil((bet * 5) / maxBet))); }
+function syncLooks(e, st) {
+    const home = e.getDynamicProperty(HOME);
+    const cfg = home ? configOf(home) : DEFAULT_CONFIG;
+    const lamps = lampsFor(st.bet, cfg.maxBet);
+    if (e.getProperty(P("lamps")) !== lamps)
+        e.setProperty(P("lamps"), lamps);
+    if (e.getProperty(P("theme")) !== cfg.theme)
+        e.setProperty(P("theme"), cfg.theme);
+}
+function setSpin(e, st, v) { st.spin = v; e.setProperty(P("spin"), v); }
+function refundAndRemove(e) {
+    const st = states.get(e.id);
+    const bet = (st ? st.bet : getInt(e, "bet")) + (e.getDynamicProperty(PENDING) ?? 0);
+    if (bet > 0)
+        give(e.dimension, e.location, "minecraft:emerald", bet);
+    states.delete(e.id);
+    e.remove();
+}
+function reelIndexNow(s, k) {
+    return (s.start[k] + (system.currentTick - s.startTick)) % SYMBOLS; // one symbol per tick, like v0.0.1
+}
+function lines(st, theme) {
+    const [a, b, c] = (STRIPS[theme] ?? STRIPS[0]).map((strip, k) => {
+        const i = st.reels[k];
+        return [strip[(i + SYMBOLS - 1) % SYMBOLS], strip[i], strip[(i + 1) % SYMBOLS]];
+    });
+    return [
+        { syms: [a[0], b[0], c[0]], row: 0 }, { syms: [a[1], b[1], c[1]], row: 1 }, { syms: [a[2], b[2], c[2]], row: 2 },
+        { syms: [a[0], b[1], c[2]], row: 3 }, { syms: [a[2], b[1], c[0]], row: 4 },
+    ];
+}
+/** the item icons of the winning symbol burst out of the top of the cabinet like a fountain (2.2.0) */
+function burst(base, theme, sym, count) {
+    const vars = new MolangVariableMap();
+    const f = frontVector(base);
+    vars.setVector3("variable.dir", f);
+    vars.setFloat("variable.count", count);
+    const top = { x: base.location.x + 0.5 + f.x * 0.1, y: base.location.y + 2.1, z: base.location.z + 0.5 + f.z * 0.1 };
+    particle(base.dimension, `${NS}:burst_${themeItem(theme, sym)[0]}`, top, vars);
+}
+function payout(e, base) {
+    const st = stateOf(e);
+    const key = keyOf(base.dimension.id, base.location);
+    const cfg = configOf(key);
+    const wins = lines(st, cfg.theme).filter(({ syms: [x, y, z] }) => x === y && y === z);
+    const points = wins.reduce((n, l) => n + cfg.points[l.syms[0]], 0);
+    const bet = st.bet;
+    let amount = Math.floor(points * bet * cfg.mult);
+    if (points > 0 && amount === 0)
+        amount = 1;
+    const dim = e.dimension;
+    const front = frontVector(base);
+    const tray = { x: base.location.x + 0.5 + front.x * 0.6, y: base.location.y + 0.7, z: base.location.z + 0.5 + front.z * 0.6 };
+    const tier = amount <= 0 ? 0
+        : wins.some((l) => l.syms[0] === "nether_star") || wins.length >= 3 || points >= 20 ? 3
+            : wins.length >= 2 || points >= 8 ? 2 : 1;
+    setBet(e, st, 0);
+    if (tier === 0) {
+        sound(dim, tray, "note.bass", 0.8);
+        st.next = system.currentTick + 10;
+        st.busy = false;
+        return;
+    }
+    // --- effects. Each winning line bursts its own symbol; bigger wins burst more often and longer.
+    const repeats = [0, 1, 3, 6][tier];
+    // particles per line; at most ~60 per wave in total so a 5-line jackpot stays light on phones
+    const perBurst = Math.max(8, Math.min([0, 14, 22, 32][tier], Math.floor(60 / Math.max(1, wins.length))));
+    for (let r = 0; r < repeats; r++) {
+        system.runTimeout(() => {
+            if (!base.isValid || base.typeId !== BLOCK_ID)
+                return;
+            wins.forEach((l, i) => system.runTimeout(() => burst(base, cfg.theme, l.syms[0], perBurst), i * 3));
+            sound(dim, tray, tier === 3 ? "firework.large_blast" : "firework.blast", 1 + r * 0.05, 0.8);
+        }, r * 12);
+    }
+    sound(dim, tray, tier === 1 ? "random.orb" : "random.levelup", tier === 1 ? 1.4 : 1);
+    if (tier >= 2)
+        particle(dim, "minecraft:totem_particle", { x: tray.x, y: tray.y + 1.6, z: tray.z });
+    if (tier === 3) {
+        for (let r = 0; r < 4; r++)
+            system.runTimeout(() => sound(dim, tray, "firework.launch", 0.9 + r * 0.1), r * 15);
+        system.runTimeout(() => sound(dim, tray, "firework.twinkle"), 40);
+        for (const p of dim.getPlayers({ location: tray, maxDistance: 16 })) {
+            p.onScreenDisplay.setTitle({ translate: "slot_machine.jackpot" }, {
+                fadeInDuration: 4, stayDuration: 40, fadeOutDuration: 10,
+                subtitle: { translate: "slot_machine.win_amount", with: [String(amount)] }
+            });
+        }
+    }
+    const msg = { translate: "slot_machine.win_amount", with: [String(amount)] };
+    for (const p of dim.getPlayers({ location: tray, maxDistance: 8 }))
+        if (tier < 3)
+            p.onScreenDisplay.setActionBar(msg);
+    // win lamp blinks while the emeralds come out
+    e.setProperty(P("win"), true);
+    const lampTicks = [0, 60, 100, 200][tier];
+    system.runTimeout(() => { if (e.isValid)
+        e.setProperty(P("win"), false); }, lampTicks);
+    // emeralds come out one handful at a time (max 24 drops), with a rising chime.
+    // The amount not paid yet is kept in a dynamic property, so closing the world in the middle loses nothing
+    // (the watchdog pays the rest after a reload).
+    const drops = Math.min(amount, 24);
+    const per = Math.floor(amount / drops), extra = amount % drops;
+    e.setDynamicProperty(PENDING, amount);
+    paying.add(e.id);
+    for (let i = 0; i < drops; i++) {
+        system.runTimeout(() => {
+            const n = per + (i < extra ? 1 : 0);
+            give(dim, tray, "minecraft:emerald", n, front);
+            sound(dim, tray, "random.orb", 0.7 + (i / drops) * 0.8, 0.6);
+            if (e.isValid) {
+                const left = (e.getDynamicProperty(PENDING) ?? 0) - n;
+                e.setDynamicProperty(PENDING, left > 0 ? left : undefined);
+            }
+            if (i === drops - 1)
+                paying.delete(e.id);
+        }, 6 + i * 2);
+    }
+    st.next = system.currentTick + 10; // swallow the clicks that were still coming
+    st.busy = false;
+}
+// ---------------------------------------------------------------- interaction
+function interact(block, player) {
+    const base = basePart(block);
+    if (!base || base.typeId !== BLOCK_ID)
+        return;
+    const e = findReels(base) ?? spawnReels(base);
+    const st = stateOf(e);
+    if (st.busy || system.currentTick < st.next)
+        return;
+    st.next = system.currentTick + COOLDOWN;
+    const cfg = configOf(keyOf(base.dimension.id, base.location));
+    const spin = st.spin;
+    const bet = st.bet;
+    const at = { x: base.location.x + 0.5, y: base.location.y + 1, z: base.location.z + 0.5 };
+    if (spin > 0) { // stop the next reel
+        const s = st.spinInfo ?? { startTick: system.currentTick, start: [...st.reels] };
+        const k = 3 - spin; // 0, 1, 2
+        st.reels[k] = reelIndexNow(s, k);
+        e.setProperty(P(`reel${k + 1}`), st.reels[k]);
+        setSpin(e, st, spin - 1);
+        sound(base.dimension, at, "random.click", 1.2 + k * 0.1);
+        if (spin - 1 === 0) {
+            st.spinInfo = undefined;
+            st.busy = true; // until payout() has reset the bet
+            system.runTimeout(() => { if (e.isValid)
+                payout(e, base);
+            else
+                states.delete(e.id); }, 10);
+        }
+        return;
+    }
+    const held = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand);
+    if (player.isSneaking) { // take one emerald back
+        if (bet > 0) {
+            setBet(e, st, bet - 1);
+            if (player.getGameMode() !== GameMode.Creative)
+                give(base.dimension, player.location, "minecraft:emerald", 1);
+            sound(base.dimension, at, "random.pop");
+            player.onScreenDisplay.setActionBar({ translate: "slot_machine.bet", with: [String(bet - 1), String(cfg.maxBet)] });
+        }
+        return;
+    }
+    if (held?.typeId === "minecraft:emerald") { // bet
+        if (bet >= cfg.maxBet) {
+            player.onScreenDisplay.setActionBar({ translate: "slot_machine.max_bet", with: [String(cfg.maxBet)] });
+            return;
+        }
+        if (!takeOneEmerald(player))
+            return;
+        setBet(e, st, bet + 1);
+        sound(base.dimension, at, "random.orb", 0.8 + Math.min(bet, 10) * 0.08);
+        particle(base.dimension, "minecraft:villager_happy", { x: at.x, y: at.y + 0.2, z: at.z });
+        player.onScreenDisplay.setActionBar({ translate: "slot_machine.bet", with: [String(bet + 1), String(cfg.maxBet)] });
+        return;
+    }
+    if (bet <= 0) {
+        player.onScreenDisplay.setActionBar({ translate: "slot_machine.need_bet" });
+        return;
+    }
+    // pull the lever
+    st.spinInfo = { startTick: system.currentTick, start: [...st.reels] };
+    setSpin(e, st, 3);
+    e.setProperty(P("win"), false);
+    sound(base.dimension, at, "tile.piston.out");
+}
+function cleanup(dim, location) {
+    // runs for each broken part; the entity stands in the lower block
+    for (const dy of [0, -1]) {
+        const loc = { x: location.x, y: location.y + dy, z: location.z };
+        const key = keyOf(dim.id, loc);
+        const c = { x: loc.x + 0.5, y: loc.y, z: loc.z + 0.5 };
+        for (const e of dim.getEntities({ type: REELS_ID, location: c, maxDistance: 0.75 })) {
+            const home = e.getDynamicProperty(HOME);
+            if (home !== undefined && home !== key)
+                continue;
+            refundAndRemove(e);
+            deleteConfig(key);
+        }
+    }
+}
+// ---------------------------------------------------------------- watchdog: entity -> block
+// onBreak does not run when the block is replaced by /setblock or /fill in replace mode, so the entity checks
+// that its machine still exists. Unloaded chunks are skipped (getBlock throws or returns undefined).
+function watchdog() {
+    for (const id of ["minecraft:overworld", "minecraft:nether", "minecraft:the_end"]) {
+        let dim;
+        try {
+            dim = world.getDimension(id);
+        }
+        catch {
+            continue;
+        }
+        for (const e of dim.getEntities({ type: REELS_ID })) {
+            let home = e.getDynamicProperty(HOME);
+            if (home === undefined) { // 2.0.x entity: link it to the block it stands in
+                home = keyOf(dim.id, e.location);
+                e.setDynamicProperty(HOME, home);
+            }
+            const k = parseKey(home);
+            if (!k)
+                continue;
+            let block;
+            try {
+                block = world.getDimension(k.dim).getBlock(k.loc);
+            }
+            catch {
+                continue;
+            }
+            if (!block || !block.isValid)
+                continue;
+            const part = block.typeId === BLOCK_ID ? block.permutation.getState("minecraft:multi_block_part") : undefined;
+            if (block.typeId !== BLOCK_ID || part !== 0) {
+                refundAndRemove(e);
+                deleteConfig(home);
+                continue;
+            }
+            syncLooks(e, stateOf(e)); // heal the lamps / theme if they ever got out of step
+            const pending = e.getDynamicProperty(PENDING);
+            if (pending && pending > 0 && !paying.has(e.id)) { // payout interrupted by a reload
+                const f = frontVector(block);
+                give(dim, { x: block.location.x + 0.5 + f.x * 0.6, y: block.location.y + 0.7, z: block.location.z + 0.5 + f.z * 0.6 }, "minecraft:emerald", pending, f);
+                e.setDynamicProperty(PENDING, undefined);
+            }
+        }
+    }
+}
+// ---------------------------------------------------------------- settings form
+const lastHit = new Map();
+function canConfigure(player) {
+    return player.playerPermissionLevel >= PlayerPermissionLevel.Operator;
+}
+async function openSettings(player, base) {
+    const key = keyOf(base.dimension.id, base.location);
+    const cfg = configOf(key);
+    const form = new ModalFormData().title({ translate: "slot_machine.cfg.title" });
+    // every element is an input, so formValues[i] matches the order below
+    const multIndex = MULTIPLIERS.indexOf(cfg.mult);
+    form.dropdown({ translate: "slot_machine.cfg.mult" }, MULTIPLIERS.map((m) => `x${m}`), { defaultValueIndex: multIndex === -1 ? 1 : multIndex, tooltip: { translate: "slot_machine.cfg.mult_tip" } });
+    form.slider({ translate: "slot_machine.cfg.max_bet" }, 1, BET_LIMIT, { valueStep: 1, defaultValue: cfg.maxBet });
+    form.dropdown({ translate: "slot_machine.cfg.theme" }, THEMES.map((t) => ({ translate: `slot_machine.theme.${t.id}` })), { defaultValueIndex: cfg.theme, tooltip: { translate: "slot_machine.cfg.theme_tip" } });
+    SYM_LIST.forEach((s, i) => {
+        form.slider({ rawtext: [{ translate: "slot_machine.cfg.rank", with: [String(i + 1)] },
+                { translate: themeItem(cfg.theme, s)[1] }, { translate: "slot_machine.cfg.points_suffix" }] }, 0, 50, { valueStep: 1, defaultValue: cfg.points[s] });
+    });
+    form.toggle({ translate: "slot_machine.cfg.as_default" }, { defaultValue: false });
+    form.toggle({ translate: "slot_machine.cfg.reset" }, { defaultValue: false });
+    form.submitButton({ translate: "slot_machine.cfg.save" });
+    const res = await form.show(player);
+    if (res.canceled || !res.formValues)
+        return;
+    if (!base.isValid || base.typeId !== BLOCK_ID)
+        return; // broken while the form was open
+    const v = res.formValues;
+    let next;
+    if (v[v.length - 1] === true) {
+        next = structuredCloneConfig(DEFAULT_CONFIG);
+    }
+    else {
+        next = { mult: MULTIPLIERS[v[0]] ?? 1, maxBet: v[1], theme: v[2], points: { ...DEFAULT_POINTS } };
+        SYM_LIST.forEach((s, i) => { next.points[s] = v[3 + i]; });
+    }
+    saveConfig(key, next);
+    if (v[v.length - 2] === true)
+        world.setDynamicProperty(CFG_DEFAULT, JSON.stringify(next));
+    const e = findReels(base);
+    if (e)
+        syncLooks(e, stateOf(e)); // lamps (share of the new max bet) and reel theme at once
+    player.onScreenDisplay.setActionBar({ translate: "slot_machine.cfg.saved" });
+    player.playSound("random.orb", { pitch: 1.5 });
+}
+function hitWithTool(player, block) {
+    const held = player.getComponent(EntityComponentTypes.Equippable)?.getEquipment(EquipmentSlot.Mainhand);
+    if (held?.typeId !== TOOL_ID)
+        return false;
+    if (block.typeId !== BLOCK_ID)
+        return false;
+    const base = basePart(block);
+    if (!base || base.typeId !== BLOCK_ID)
+        return true;
+    const last = lastHit.get(player.id) ?? -100;
+    if (system.currentTick - last < 10)
+        return true; // one form per swing
+    lastHit.set(player.id, system.currentTick);
+    if (!canConfigure(player)) {
+        player.onScreenDisplay.setActionBar({ translate: "slot_machine.cfg.no_permission" });
+        return true;
+    }
+    void openSettings(player, base);
+    return true;
+}
+// ---------------------------------------------------------------- registration
+system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
+    blockComponentRegistry.registerCustomComponent(`${NS}:machine`, {
+        onPlace({ block }) {
+            const part = block.permutation.getState("minecraft:multi_block_part");
+            if (part !== 0)
+                return;
+            system.run(() => { if (block.isValid && block.typeId === BLOCK_ID && !findReels(block))
+                spawnReels(block); });
+        },
+        onPlayerInteract({ block, player }) {
+            if (!player)
+                return;
+            system.run(() => interact(block, player));
+        },
+        onBreak({ block, dimension }) {
+            // remove the reels in the same tick (2.0.13 waited one tick with system.run and the reels were seen
+            // floating for a moment). Fall back to the next tick if this callback does not allow world changes.
+            const loc = { ...block.location };
+            try {
+                cleanup(dimension, loc);
+            }
+            catch {
+                system.run(() => cleanup(dimension, loc));
+            }
+        },
+    });
 });
-
-function getDirection(rotation){
-  let direction = 0;
-  if(rotation > 45 && rotation <= 135){
-    direction = 90;
-  } else if(rotation > 135 || rotation <= -135){
-    direction = -180;
-  } else if(rotation > -135 && rotation <= -45){
-    direction = -90;
-  }
-  return direction
-}
-
-
-function getBingo(slot_1, slot_2, slot_3){
-  let bingo = [];
-  if(slot_1[0] == slot_2[0] && slot_2[0] == slot_3[0]){
-    bingo.push(slot_1[0]);
-  }
-  if(slot_1[0] == slot_2[1] && slot_2[1] == slot_3[2]){
-    bingo.push(slot_1[0]);
-  }
-  if(slot_1[1] == slot_2[1] && slot_2[1] == slot_3[1]){
-    bingo.push(slot_1[1]);
-  }
-  if(slot_1[2] == slot_2[1] && slot_2[1] == slot_3[0]){
-    bingo.push(slot_1[2]);
-  }
-  if(slot_1[2] == slot_2[2] && slot_2[2] == slot_3[2]){
-    bingo.push(slot_1[2]);
-  }
-  return bingo;
-}
-
-function propertyToSlotData(property, slot_data){
-  let slot_data_1_index = property > 0 ? property - 1 : max_slot - 1;
-  let slot_data_3_index = property < max_slot-1 ? property + 1 : 0;
-  return [slot_data[slot_data_1_index], slot_data[property], slot_data[slot_data_3_index]];
-}
-
-const max_slot = 18;
-const role_data = {
-  "diamond": 8,
-  "sweet_berries": 2,
-  "melon": 3,
-  "emerald": 4.0,
-  "apple_golden": 5,
-  "amethyst_shard": 6,
-  "nether_star": 10
-};
-const slot_1_data = {
-  0: "diamond",
-  1: "sweet_berries",
-  2: "melon",
-  3: "apple_golden",
-  4: "emerald",
-  5: "nether_star",
-  6: "sweet_berries",
-  7: "melon",
-  8: "amethyst_shard",
-  9: "emerald",
-  10: "apple_golden",
-  11: "sweet_berries",
-  12: "emerald",
-  13: "melon",
-  14: "amethyst_shard",
-  15: "emerald",
-  16: "sweet_berries",
-  17: "apple_golden",
-};
-
-const slot_2_data = {
-  0: "diamond",
-  1: "apple_golden",
-  2: "sweet_berries",
-  3: "melon",
-  4: "amethyst_shard",
-  5: "emerald",
-  6: "melon",
-  7: "sweet_berries",
-  8: "nether_star",
-  9: "emerald",
-  10: "apple_golden",
-  11: "emerald",
-  12: "sweet_berries",
-  13: "melon",
-  14: "emerald",
-  15: "amethyst_shard",
-  16: "apple_golden",
-  17: "sweet_berries",
-};
-
-const slot_3_data = {
-  0: "diamond",
-  1: "emerald",
-  2: "apple_golden",
-  3: "sweet_berries",
-  4: "melon",
-  5: "amethyst_shard",
-  6: "melon",
-  7: "emerald",
-  8: "sweet_berries",
-  9: "melon",
-  10: "nether_star",
-  11: "apple_golden",
-  12: "emerald",
-  13: "sweet_berries",
-  14: "melon",
-  15: "amethyst_shard",
-  16: "sweet_berries",
-  17: "emerald",
-};
+// the settings tool must not break the machine (survival mining or creative instant break)
+world.beforeEvents.playerBreakBlock.subscribe((ev) => {
+    if (ev.block.typeId !== BLOCK_ID || ev.itemStack?.typeId !== TOOL_ID)
+        return;
+    ev.cancel = true;
+    const { player, block } = ev;
+    system.run(() => { if (player.isValid && block.isValid)
+        hitWithTool(player, block); });
+});
+world.afterEvents.entityHitBlock.subscribe(({ damagingEntity, hitBlock }) => {
+    // runs for every block any player hits: check the block type first (cheapest), then the held item
+    if (hitBlock.typeId === BLOCK_ID && damagingEntity instanceof Player)
+        hitWithTool(damagingEntity, hitBlock);
+});
+world.afterEvents.worldLoad.subscribe(() => {
+    system.runInterval(watchdog, 40);
+});
+// A machine whose entity went missing (for example after /kill @e) gets it back the next time it is used (see interact()).

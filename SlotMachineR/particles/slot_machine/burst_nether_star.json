@@ -1,0 +1,73 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "slot_machine:burst_nether_star",
+      "basic_render_parameters": {
+        "material": "particles_alpha",
+        "texture": "textures/items/nether_star"
+      }
+    },
+    "components": {
+      "minecraft:emitter_initialization": {
+        "creation_expression": "variable.count ?? { variable.count = 16; }; variable.dir ?? { variable.dir.x = 0; variable.dir.y = 0; variable.dir.z = 1; };"
+      },
+      "minecraft:emitter_rate_instant": {
+        "num_particles": "variable.count"
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.05
+      },
+      "minecraft:emitter_shape_sphere": {
+        "radius": 0.12,
+        "surface_only": false,
+        "direction": [
+          "variable.dir.x * 0.5 + math.random(-0.8, 0.8)",
+          "math.random(2.2, 3.4)",
+          "variable.dir.z * 0.5 + math.random(-0.8, 0.8)"
+        ]
+      },
+      "minecraft:particle_initial_speed": "math.random(5, 8.5)",
+      "minecraft:particle_initial_spin": {
+        "rotation": "math.random(-30, 30)",
+        "rotation_rate": "math.random(-240, 240)"
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(1.4, 2.1)"
+      },
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          0,
+          -14,
+          0
+        ],
+        "linear_drag_coefficient": 1.2,
+        "rotation_drag_coefficient": 1.5
+      },
+      "minecraft:particle_motion_collision": {
+        "collision_radius": 0.08,
+        "coefficient_of_restitution": 0.35,
+        "collision_drag": 4
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "variable.particle_random_1 < 0.33 ? 0.13 * (1 - math.max(0, variable.particle_age / variable.particle_lifetime - 0.7) / 0.3) : 0.06",
+          "variable.particle_random_1 < 0.33 ? 0.13 * (1 - math.max(0, variable.particle_age / variable.particle_lifetime - 0.7) / 0.3) : 0.06"
+        ],
+        "facing_camera_mode": "rotate_xyz",
+        "uv": {
+          "texture_width": 16,
+          "texture_height": 16,
+          "uv": [
+            "variable.particle_random_1 < 0.33 ? 0 : math.floor(variable.particle_random_2 * 3) * 4 + 2",
+            "variable.particle_random_1 < 0.33 ? 0 : math.floor(variable.particle_random_3 * 3) * 4 + 2"
+          ],
+          "uv_size": [
+            "variable.particle_random_1 < 0.33 ? 16 : 4",
+            "variable.particle_random_1 < 0.33 ? 16 : 4"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "slot_machine:reels",
+      "is_spawnable": false,
+      "is_summonable": true,
+      "properties": {
+        "slot_machine:reel1": {
+          "type": "int",
+          "range": [
+            0,
+            17
+          ],
+          "default": 0,
+          "client_sync": true
+        },
+        "slot_machine:reel2": {
+          "type": "int",
+          "range": [
+            0,
+            17
+          ],
+          "default": 0,
+          "client_sync": true
+        },
+        "slot_machine:reel3": {
+          "type": "int",
+          "range": [
+            0,
+            17
+          ],
+          "default": 0,
+          "client_sync": true
+        },
+        "slot_machine:spin": {
+          "type": "int",
+          "range": [
+            0,
+            3
+          ],
+          "default": 0,
+          "client_sync": true
+        },
+        "slot_machine:bet": {
+          "type": "int",
+          "range": [
+            0,
+            64
+          ],
+          "default": 0,
+          "client_sync": true
+        },
+        "slot_machine:lamps": {
+          "type": "int",
+          "range": [
+            0,
+            5
+          ],
+          "default": 0,
+          "client_sync": true
+        },
+        "slot_machine:theme": {
+          "type": "int",
+          "range": [
+            0,
+            3
+          ],
+          "default": 0,
+          "client_sync": true
+        },
+        "slot_machine:win": {
+          "type": "bool",
+          "default": false,
+          "client_sync": true
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "slot_machine",
+          "inanimate"
+        ]
+      },
+      "minecraft:collision_box": {
+        "width": 0.1,
+        "height": 0.1
+      },
+      "minecraft:physics": {
+        "has_gravity": false,
+        "has_collision": false
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "all",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:health": {
+        "value": 1,
+        "max": 1
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1
+      },
+      "minecraft:fire_immune": {},
+      "minecraft:persistent": {},
+      "minecraft:conditional_bandwidth_optimization": {}
+    }
+  }
+}

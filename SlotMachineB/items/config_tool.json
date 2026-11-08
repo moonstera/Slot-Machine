@@ -1,0 +1,21 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "slot_machine:config_tool",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": "slot_machine_config_tool",
+      "minecraft:display_name": {
+        "value": "item.slot_machine:config_tool.name"
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:hand_equipped": true,
+      "minecraft:glint": true,
+      "minecraft:can_destroy_in_creative": false
+    }
+  }
+}

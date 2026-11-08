@@ -1,0 +1,144 @@
+{
+  "format_version": "1.26.40",
+  "minecraft:block": {
+    "description": {
+      "identifier": "slot_machine:v1",
+      "menu_category": {
+        "category": "none"
+      },
+      "traits": {
+        "minecraft:placement_direction": {
+          "enabled_states": [
+            "minecraft:cardinal_direction"
+          ],
+          "y_rotation_offset": 180
+        },
+        "minecraft:multi_block": {
+          "enabled_states": [
+            "minecraft:multi_block_part"
+          ],
+          "parts": 2,
+          "direction": "up"
+        }
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.slot_machine_lower",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "slot_machine_cabinet",
+          "render_method": "opaque"
+        },
+        "reels": {
+          "texture": "slot_machine_reels_icon",
+          "render_method": "opaque"
+        }
+      },
+      "minecraft:collision_box": {
+        "origin": [
+          -6,
+          0,
+          -8
+        ],
+        "size": [
+          12,
+          16,
+          15
+        ]
+      },
+      "minecraft:selection_box": {
+        "origin": [
+          -6,
+          0,
+          -8
+        ],
+        "size": [
+          12,
+          16,
+          15
+        ]
+      },
+      "minecraft:movable": {
+        "movement_type": "immovable"
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 6
+      },
+      "minecraft:light_dampening": 0,
+      "minecraft:map_color": "#b21e28",
+      "minecraft:tags": [
+        "minecraft:is_pickaxe_item_destructible",
+        "slot_machine:cabinet"
+      ],
+      "minecraft:loot": "loot_tables/slot_machine/slot_machine.json",
+      "slot_machine:machine": {}
+    },
+    "permutations": [
+      {
+        "condition": "q.block_state('minecraft:multi_block_part') == 0",
+        "components": {
+          "minecraft:geometry": "geometry.slot_machine_lower"
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:multi_block_part') == 1",
+        "components": {
+          "minecraft:geometry": "geometry.slot_machine_upper",
+          "minecraft:light_emission": 7,
+          "minecraft:loot": "loot_tables/slot_machine/empty.json"
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'north'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'south'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              180,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'east'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              270,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'west'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              90,
+              0
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
