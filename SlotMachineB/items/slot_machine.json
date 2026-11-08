@@ -1,0 +1,22 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "slot_machine:v1",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:icon": "slot_machine_v1",
+      "minecraft:display_name": {
+        "value": "tile.slot_machine:v1.name"
+      },
+      "minecraft:max_stack_size": 16,
+      "minecraft:block_placer": {
+        "block": "slot_machine:v1",
+        "replace_block_item": true
+      }
+    }
+  }
+}

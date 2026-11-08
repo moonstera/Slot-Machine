@@ -1,0 +1,161 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.slot_machine.reel1": {
+      "initial_state": "stopped",
+      "states": {
+        "stopped": {
+          "animations": [
+            "reel1_rest"
+          ],
+          "transitions": [
+            {
+              "spinning": "q.property('slot_machine:spin') >= 3"
+            }
+          ]
+        },
+        "spinning": {
+          "on_entry": [
+            "v.t1 = q.life_time;",
+            "v.s1 = q.property('slot_machine:reel1');"
+          ],
+          "animations": [
+            "reel1_spin"
+          ],
+          "transitions": [
+            {
+              "braking": "!(q.property('slot_machine:spin') >= 3)"
+            }
+          ]
+        },
+        "braking": {
+          "animations": [
+            "reel1_rest",
+            "reel1_brake"
+          ],
+          "transitions": [
+            {
+              "spinning": "q.property('slot_machine:spin') >= 3"
+            },
+            {
+              "stopped": "q.all_animations_finished"
+            }
+          ]
+        }
+      }
+    },
+    "controller.animation.slot_machine.reel2": {
+      "initial_state": "stopped",
+      "states": {
+        "stopped": {
+          "animations": [
+            "reel2_rest"
+          ],
+          "transitions": [
+            {
+              "spinning": "q.property('slot_machine:spin') >= 2"
+            }
+          ]
+        },
+        "spinning": {
+          "on_entry": [
+            "v.t2 = q.life_time;",
+            "v.s2 = q.property('slot_machine:reel2');"
+          ],
+          "animations": [
+            "reel2_spin"
+          ],
+          "transitions": [
+            {
+              "braking": "!(q.property('slot_machine:spin') >= 2)"
+            }
+          ]
+        },
+        "braking": {
+          "animations": [
+            "reel2_rest",
+            "reel2_brake"
+          ],
+          "transitions": [
+            {
+              "spinning": "q.property('slot_machine:spin') >= 2"
+            },
+            {
+              "stopped": "q.all_animations_finished"
+            }
+          ]
+        }
+      }
+    },
+    "controller.animation.slot_machine.reel3": {
+      "initial_state": "stopped",
+      "states": {
+        "stopped": {
+          "animations": [
+            "reel3_rest"
+          ],
+          "transitions": [
+            {
+              "spinning": "q.property('slot_machine:spin') >= 1"
+            }
+          ]
+        },
+        "spinning": {
+          "on_entry": [
+            "v.t3 = q.life_time;",
+            "v.s3 = q.property('slot_machine:reel3');"
+          ],
+          "animations": [
+            "reel3_spin"
+          ],
+          "transitions": [
+            {
+              "braking": "!(q.property('slot_machine:spin') >= 1)"
+            }
+          ]
+        },
+        "braking": {
+          "animations": [
+            "reel3_rest",
+            "reel3_brake"
+          ],
+          "transitions": [
+            {
+              "spinning": "q.property('slot_machine:spin') >= 1"
+            },
+            {
+              "stopped": "q.all_animations_finished"
+            }
+          ]
+        }
+      }
+    },
+    "controller.animation.slot_machine.lever": {
+      "initial_state": "idle",
+      "states": {
+        "idle": {
+          "animations": [
+            {
+              "win_blink": "q.property('slot_machine:win')"
+            }
+          ],
+          "transitions": [
+            {
+              "pull": "q.property('slot_machine:spin') == 3"
+            }
+          ]
+        },
+        "pull": {
+          "animations": [
+            "pulling"
+          ],
+          "transitions": [
+            {
+              "idle": "q.all_animations_finished && q.property('slot_machine:spin') != 3"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

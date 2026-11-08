@@ -1,0 +1,50 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "slot_machine:reels",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/slot_machine_reels",
+        "ores": "textures/entity/slot_machine_reels_ores",
+        "food": "textures/entity/slot_machine_reels_food",
+        "mobs": "textures/entity/slot_machine_reels_mobs"
+      },
+      "geometry": {
+        "default": "geometry.slot_machine_reels"
+      },
+      "scripts": {
+        "animate": [
+          "ctrl_reel1",
+          "ctrl_reel2",
+          "ctrl_reel3",
+          "ctrl_lever"
+        ]
+      },
+      "animations": {
+        "pulling": "animation.slot_machine.pulling",
+        "win_blink": "animation.slot_machine.win_blink",
+        "reel1_rest": "animation.slot_machine.reel1_rest",
+        "reel1_spin": "animation.slot_machine.reel1_spin",
+        "reel1_brake": "animation.slot_machine.reel1_brake",
+        "ctrl_reel1": "controller.animation.slot_machine.reel1",
+        "reel2_rest": "animation.slot_machine.reel2_rest",
+        "reel2_spin": "animation.slot_machine.reel2_spin",
+        "reel2_brake": "animation.slot_machine.reel2_brake",
+        "ctrl_reel2": "controller.animation.slot_machine.reel2",
+        "reel3_rest": "animation.slot_machine.reel3_rest",
+        "reel3_spin": "animation.slot_machine.reel3_spin",
+        "reel3_brake": "animation.slot_machine.reel3_brake",
+        "ctrl_reel3": "controller.animation.slot_machine.reel3",
+        "ctrl_lever": "controller.animation.slot_machine.lever"
+      },
+      "render_controllers": [
+        {
+          "controller.render.slot_machine.reels": "q.relative_block_has_any_tag(0, 0.5, 0, 'slot_machine:cabinet')"
+        }
+      ]
+    }
+  }
+}

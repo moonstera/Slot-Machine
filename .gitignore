@@ -1,0 +1,4 @@
+# local build tools (not published)
+tools/
+node_modules/
+__pycache__/

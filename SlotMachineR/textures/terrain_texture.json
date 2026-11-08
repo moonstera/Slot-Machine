@@ -1,0 +1,12 @@
+{
+  "resource_pack_name": "slot_machine",
+  "texture_name": "atlas.terrain",
+  "texture_data": {
+    "slot_machine_cabinet": {
+      "textures": "textures/blocks/slot_machine_cabinet"
+    },
+    "slot_machine_reels_icon": {
+      "textures": "textures/entity/slot_machine_reels"
+    }
+  }
+}

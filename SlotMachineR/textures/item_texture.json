@@ -4,6 +4,9 @@
   "texture_data": {
     "slot_machine_v1": {
       "textures": "textures/items/slot_machine_v1"
+    },
+    "slot_machine_config_tool": {
+      "textures": "textures/items/slot_machine_config_tool"
     }
   }
 }
